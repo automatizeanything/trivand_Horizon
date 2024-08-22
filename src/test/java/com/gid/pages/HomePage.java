@@ -14,10 +14,10 @@ import org.openqa.selenium.support.FindBy;
 @DefaultUrl("page:webdriver.base.url")
 public class HomePage extends PageObject {
 
-    private @FindBy(xpath = "//input[@placeholder='Email']")
+    private @FindBy(xpath = "//input[@id='user_email']")
     WebElementFacade userNameField;
 
-    private @FindBy(xpath = "//input[@placeholder='Password']")
+    private @FindBy(xpath = "//input[@id='user_password']")
     WebElement passwordField;
 
     private @FindBy(xpath = "//button[@label='LOGIN']")
