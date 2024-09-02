@@ -13,14 +13,14 @@ public class LoginPageSteps {
     LoginSteps loginSteps;
 
 
-    @Given("I am in the login page of GID application")
+    @Given("I am in the login page of Horizon application")
     public void loadApplication() {
         loginSteps.loadLoginPage();
     }
 
-    @And("I login into GID application as {string}")
+    @And("I login into Horizon application as {string}")
     public void loadApplication(String userType) {
-        loginSteps.loginToGIDApp(userType);
+        loginSteps.loginToHorizonApp(userType);
     }
 
     @And("Login should be failed for invalid credentials")
