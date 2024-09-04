@@ -2,8 +2,6 @@ package com.gid.stepdefinitions;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import net.serenitybdd.annotations.Steps;
 import com.gid.stepdefinitions.steps.LoginSteps;
 
@@ -17,12 +15,14 @@ public class LoginPageSteps {
     public void loadApplication() {
         loginSteps.loadLoginPage();
     }
-
     @And("I login into Horizon application as {string}")
     public void loadApplication(String userType) {
         loginSteps.loginToHorizonApp(userType);
     }
-
+    @And("I login into Horizon application as a {string} {string}")
+    public void loginHorizonApplication(String brand, String userType) {
+        loginSteps.loginToHorizonApp(brand,userType);
+    }
     @And("Login should be failed for invalid credentials")
     public void invalidCredentialCheck() {
         loginSteps.loginInvalidCredentials();

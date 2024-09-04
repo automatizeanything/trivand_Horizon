@@ -16,10 +16,8 @@ public class LoginPage extends PageObject {
 
     private @FindBy(xpath = "//input[@id='user_email']")
     WebElementFacade userNameField;
-
     private @FindBy(xpath = "//input[@id='user_password']")
     WebElement passwordField;
-
     private @FindBy(xpath = "//input[@value='Login']")
     WebElement loginButton;
 
@@ -41,13 +39,11 @@ public class LoginPage extends PageObject {
         loginButton.click();
         commonMethods.waitForPageToLoad(getDriver());
     }
-
     private void enterRuntimeCreatedUserDetails(String userType) {
         String userName=userType.split("Created")[1];
         userNameField.sendKeys(Serenity.sessionVariableCalled(userName+ "EmailId").toString());
         System.out.println("test");
     }
-
     public void validateInvalidLogin() {
         commonMethods.verifyValidationMessage(Constant.INVALID_LOGIN_VALIDATION_MESSAGE);
     }
