@@ -1,4 +1,4 @@
-package com.gid;
+package com.horizon;
 
 import io.cucumber.junit.CucumberOptions;
 import net.serenitybdd.cucumber.CucumberWithSerenity;
@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         plugin = {"pretty"},
         features = "src/test/resources/features",
-        tags = "@Login"
+        tags = "@ClaimCreation"
 
 )
 public class TestRunner {}
