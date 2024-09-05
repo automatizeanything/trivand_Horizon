@@ -1,4 +1,4 @@
-package com.gid.utility;
+package com.horizon.utility;
 
 public enum resources {
     login("/user/login"),

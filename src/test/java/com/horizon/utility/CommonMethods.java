@@ -1,4 +1,4 @@
-package com.gid.utility;
+package com.horizon.utility;
 
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;
@@ -48,7 +48,6 @@ public class CommonMethods extends PageObject {
         waitFor(dropDownList);
         getDriver().findElement(By.xpath("//li[contains(.,'" + value + "')]")).click();
     }
-
     public void selectFromMultiSelectDropDown(WebElementFacade dropdown, String value) {
         waitFor(dropdown);
         waitABit(4000);
@@ -65,10 +64,9 @@ public class CommonMethods extends PageObject {
         } else
             Assert.assertFalse(value + " value is not available in the dropdown", false);
     }
-
     public void verifyValidationMessage(String message) {
         waitABit(1000);
-        WebElement validationMessage = getDriver().findElement(By.xpath("//label[contains(.,'" + message + "')]"));
+        WebElement validationMessage = getDriver().findElement(By.xpath("//span[contains(.,\"" + message + "\")]"));;
         //label[contains(.,'Please Enter Damage Type')]
         waitFor(validationMessage);
         if (validationMessage.isDisplayed())
@@ -80,7 +78,6 @@ public class CommonMethods extends PageObject {
                     as("Validation message is missing").isFalse();
         waitABit(1000);
     }
-
     public void verifyConfirmationMessage(String message) {
         if (!isCucumberTagAvailable("Login", "tag")) {
             waitABit(500);
@@ -95,34 +92,28 @@ public class CommonMethods extends PageObject {
                     as("Confirmation message is missing").isFalse();
         waitABit(1000);
     }
-
     public boolean isCucumberTagAvailable(String tageName, String tagType) {
         Set<TestTag> tags = StepEventBus.getEventBus().getBaseStepListener().latestTestOutcome().get().getTags();
         return tags.contains(TestTag.withName(tageName).andType(tagType));
     }
-
     public String getName(String Value) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyHHmm");
         return Value + simpleDateFormat.format(new Date());
     }
-
     public void enterValueInField(WebElement FieldLoc, String Fieldvalue) {
         waitFor(FieldLoc);
         typeInto(FieldLoc, Fieldvalue);
         waitABit(1000);
     }
-
     public void waitAndClick(WebElement element) {
         waitFor(element);
         clickOn(element);
     }
-
     public void performLogout() {
         waitAndClick(profile_pic_label);
         waitAndClick(logout_label);
         waitABit(4000);
     }
-
     public String randomNumbergenerator(int size) {
         Random rand = new Random();
 
@@ -138,7 +129,6 @@ public class CommonMethods extends PageObject {
 
         return str;
     }
-
     public void waitForElementVisible(WebElement element, String WeElementname) {
         try {
             waitFor(element);
@@ -146,7 +136,6 @@ public class CommonMethods extends PageObject {
             Assert.fail(WeElementname + " is not displayed");
         }
     }
-
     public void waitForElementVisible(String xpath, String WeElementname) {
         try {
             waitFor(getDriver().findElement(By.xpath(xpath)));
@@ -154,7 +143,6 @@ public class CommonMethods extends PageObject {
             Assert.fail(WeElementname + " is not displayed");
         }
     }
-
     public void waitForElementClickable(WebElement element, String WeElementname) {
         try {
             wait.until(ExpectedConditions.elementToBeClickable(element));
@@ -162,17 +150,14 @@ public class CommonMethods extends PageObject {
             Assert.fail(WeElementname + " is not displayed");
         }
     }
-
     public void clickWithJavaScript(WebElementFacade element) {
         JavascriptExecutor executor = (JavascriptExecutor) getDriver();
         executor.executeScript("arguments[0].click();", element);
     }
-
     public void scrollWithJavaScript(WebElementFacade element) {
         JavascriptExecutor executor = (JavascriptExecutor) getDriver();
         executor.executeScript("arguments[0].scrollIntoView(true);", element);
     }
-
     public void clickonAnyDate(List<WebElementFacade> date, String day) {
         for (WebElementFacade ele : date) {
             if (ele.getText().equalsIgnoreCase(day)) {
@@ -182,7 +167,6 @@ public class CommonMethods extends PageObject {
 
         }
     }
-
     public void assertValuePresentInElements(List<WebElementFacade> elements, String value) {
         boolean valueFound = false;
         for (WebElement element : elements) {
@@ -193,18 +177,16 @@ public class CommonMethods extends PageObject {
         }
         Assert.assertTrue("The value '" + value + "' is not present in the list of elements.", valueFound);
     }
-
     public String selectDropdownValueAtRuntime(WebElementFacade dropdownEle) {
         waitForElementVisible(dropdownEle, "dropdown element");
         dropdownEle.click();
         waitABit(2000);
-        WebElement firstOption = getDriver().findElement(By.xpath("//p-dropdownitem/li/span[1]"));
+        WebElement firstOption = getDriver().findElement(By.xpath("//ul/li[contains(@class,'ui-menu-item')]"));
         String firstOptionValue = firstOption.getText();
         firstOption.click();
         return firstOptionValue;
 
     }
-
     public String selectCheckBoxValueAtRuntime(WebElementFacade checkboxEle) {
         waitABit(3000);
         try {
@@ -225,7 +207,6 @@ public class CommonMethods extends PageObject {
         return firstOptionValue;
 
     }
-
     public static void waitForPageToLoad(WebDriver driver) {
         ExpectedCondition<Boolean> pageLoadCondition = new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
@@ -236,18 +217,15 @@ public class CommonMethods extends PageObject {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30)); // Adjust timeout as needed
         wait.until(pageLoadCondition);
     }
-
     public void scrollIntoTheViewAndClick(WebElement element) {
         ((JavascriptExecutor) getDriver()).executeScript("arguments[0].scrollIntoView(true);", element);
         waitUntilWebElementIsVisible(element);
         element.click();
 
     }
-
     public void clickByJS(WebElement element) {
         jsExecutor.executeScript("arguments[0].click();", element);
     }
-
     public void waitUntilWebElementIsVisible(WebElement element) {
         try {
            this.wait.until(ExpectedConditions.visibilityOf(element));
@@ -266,10 +244,12 @@ public class CommonMethods extends PageObject {
 
         }
     }
-
-    public int generateRandomNumber() {
-        Random random = new Random();
-        return random.nextInt(1000);
+    public WebElementFacade getLinkByText(String linkText) {
+        return find(By.xpath(linkText));
     }
+    public void clickLinkByText(String linkText) {
+        getLinkByText(linkText).click();
+    }
+
 
 }
