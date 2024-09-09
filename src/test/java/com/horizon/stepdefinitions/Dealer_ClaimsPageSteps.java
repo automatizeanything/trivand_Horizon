@@ -2,6 +2,7 @@ package com.horizon.stepdefinitions;
 
 import com.horizon.pages.dealer.Dealer_DashBoardPage;
 import com.horizon.stepdefinitions.steps.Dealer_ClaimsSteps;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import net.serenitybdd.annotations.Steps;
 
@@ -17,10 +18,9 @@ public class Dealer_ClaimsPageSteps {
     public void iSaveANewClaimAsDraft(String brandName) {
         claimsSteps.ISaveClaimAsDraft(brandName);
     }
-
-    @And("I create a new claim for {string} and submit it for approval")
-    public void iCreateANewClaimAndSubmitForApproval(String brandName) {
-        claimsSteps.ICreateNewClaim(brandName);
+    @And("I have added vehicle details for {string}")
+    public void iAddVehicleDetailsForClaim(String brandName) {
+        claimsSteps.addVehicleDetails(brandName);
     }
     @And("I navigate to My Claims page and validated the claims details with status {string}")
     public void iHaveValidatedClaimsDetailsInMyClaimsPage(String claimStatus) {
@@ -31,7 +31,23 @@ public class Dealer_ClaimsPageSteps {
         claimsSteps.ISelectClaimAndEdit();
     }
     @And("I have added damage item details")
-    public void iHaveAddedDamageItemDetails() {
-        claimsSteps.IHavAddedDamageItems();
+    public void iHaveAddedDamageItemDetails(DataTable damageItems) {
+        claimsSteps.IHavAddedDamageItems(damageItems);
+    }
+    @And("I have added damage item estimate details")
+    public void iHaveAddedDamageItemEstimateDetails(DataTable damageItemsEstimateDetails) {
+        claimsSteps.IHavAddedDamageItemsEstimateDetails(damageItemsEstimateDetails);
+    }
+    @And("I save damage item estimate details as draft")
+    public void iSaveDamageItemEstimateDetailsAsDraft(DataTable damageItemsEstimateDetails) {
+        claimsSteps.IHavSaveDamageItemsEstimateDetailsAsDraft(damageItemsEstimateDetails);
+    }
+    @And("I navigate Documents Upload page and upload documents")
+    public void iNavigateDocumentsUpdatePage() {
+        claimsSteps.iNavigateDocumentUpdatePage();
+    }
+    @And("I submit the claim")
+    public void iSubmitClaim() {
+        claimsSteps.iSubmitClaim();
     }
 }
