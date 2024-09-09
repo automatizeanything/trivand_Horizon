@@ -57,10 +57,8 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade calenderIcon;
     private @FindBy(xpath = "//div[3]/table/thead/tr/th/i")
     WebElementFacade calenderIconArrowLeft;
-
     private @FindBy(xpath = "//tbody/tr/td[@class='day']")
     List<WebElementFacade> calendarDaysList;
-
     private @FindBy(xpath = "//input[@id='cached_vehicle_arrival_date']")
     WebElementFacade arrivalDateTxtFld;
     private @FindBy(xpath = "//a[contains(@class,'open-btn')]")
@@ -71,8 +69,10 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade claimSearchBtn;
     private @FindBy(xpath = "//table/tbody/tr")
     List<WebElementFacade> claimsList;
-    private @FindBy(xpath = "//table/tbody/tr/td[2]/a[2] | //table/tbody/tr/td[2]/a")
+    private @FindBy(xpath = "//table/tbody/tr/td[2]/a[2]")
     WebElementFacade claimIdFld;
+    private @FindBy(xpath = "//table/tbody/tr/td[2]/a")
+    WebElementFacade claimIdFld_AwaitingAcceptance;
     private @FindBy(xpath = "//table/tbody/tr/td[3]")
     WebElementFacade brandNameFld;
     private @FindBy(xpath = "//table/tbody/tr/td[4]")
@@ -91,14 +91,12 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade damageLocationDropDown;
     private @FindBy(xpath = "//input[@id='damage_location_name']")
     WebElementFacade damageLocationDropDownField;
-
     private @FindBy(xpath = "//span[@id='damage-location-help-inline']/i")
     WebElementFacade damageLocationDropDownTickIcon;
     private @FindBy(xpath = "//div[@id='damage']/fieldset/div[2]/div/a/i")
     WebElementFacade damageTypeDropDown;
     private @FindBy(xpath = "//input[@id='damage_type_name']")
     WebElementFacade damageTypeDropDownField;
-
     private @FindBy(xpath = "//span[@id='damage-type-help-inline']/i")
     WebElementFacade damageTypeDropDownTickIcon;
     private @FindBy(xpath = "//div[@id='damage']/fieldset/div[3]/div/a/i")
@@ -159,12 +157,6 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade claimSubmissionConfirmationMessage;
     private @FindBy(xpath = "(//a[contains(text(),'Home')])[2]")
     WebElementFacade backToHomeButton;
-
-
-
-
-
-
 
 
     CommonMethods commonMethods = new CommonMethods();
@@ -239,7 +231,7 @@ public class Dealer_ClaimsPage extends PageObject {
             assertThat(dealerBrandFld.getAttribute("value").trim()).as("Dealer Brand Name is not correct. Actual : " + dealerBrandFld.getText().trim() + ". Expected : " + Serenity.sessionVariableCalled("brandName"))
                     .isEqualTo(Serenity.sessionVariableCalled("brandName"));
             assertThat(dealerBrandFld.getAttribute("readonly").equals("true")).as("Dealer Brand Name Field is editable. It should be non editable.").isTrue();
-        }  else if (subPage.equals("Damage Items")) {
+        } else if (subPage.equals("Damage Items")) {
             waitFor(vehicleSideBarLink);
             assertThat(vehicleSideBarLink.findElement(By.xpath(".//a")).getAttribute("href")).as("Vehicle Sidebar link is not active in Damage Items details submission page")
                     .contains("vehicle/edit");
@@ -310,29 +302,37 @@ public class Dealer_ClaimsPage extends PageObject {
         LocalDate previousDate = currentDate.minusDays(5);
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String newDateOnly = previousDate.format(outputFormatter);
-        Serenity.setSessionVariable("arrivalDate").to(newDateOnly+ " 09:25");
+        Serenity.setSessionVariable("arrivalDate").to(newDateOnly + " 09:25");
     }
 
-    private void selectSpecificDate(){
+    private void selectSpecificDate() {
         LocalDate currentDate = LocalDate.now();
         LocalDate previousDate = currentDate.minusDays(5);
         int dayOfMonth = previousDate.getDayOfMonth();
         for (WebElementFacade day : calendarDaysList) {
-             if(Integer.parseInt(day.getText())==dayOfMonth) {
-                 clickOn(day);
-                 break;
-             }
+            if (Integer.parseInt(day.getText()) == dayOfMonth) {
+                clickOn(day);
+                break;
+            }
         }
     }
+
     public void verifyClaimStatusInClaimListingPage(String claimStatus) {
         searchAClaimInListingPage();
 
-        assertThat(claimIdFld.getText().trim()).as("Claim Id Value is missing").isNotEqualTo("");
-        if (Objects.nonNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted")))
-            assertThat(claimIdFld.getText().trim()).as("Claim Id Value is not same as previous").
-                    isEqualTo(Serenity.sessionVariableCalled("claimId").toString());
-        Serenity.setSessionVariable("claimId").to(claimIdFld.getText().trim());
-
+        if (Objects.nonNull(Serenity.sessionVariableCalled("isClaimSubmitted"))) {
+            assertThat(claimIdFld_AwaitingAcceptance.getText().trim()).as("Claim Id Value is missing").isNotEqualTo("");
+            if (Objects.nonNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted")))
+                assertThat(claimIdFld_AwaitingAcceptance.getText().trim()).as("Claim Id Value is not same as previous").
+                        isEqualTo(Serenity.sessionVariableCalled("claimId").toString());
+            Serenity.setSessionVariable("claimId").to(claimIdFld_AwaitingAcceptance.getText().trim());
+        } else {
+            assertThat(claimIdFld.getText().trim()).as("Claim Id Value is missing").isNotEqualTo("");
+            if (Objects.nonNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted")))
+                assertThat(claimIdFld.getText().trim()).as("Claim Id Value is not same as previous").
+                        isEqualTo(Serenity.sessionVariableCalled("claimId").toString());
+            Serenity.setSessionVariable("claimId").to(claimIdFld.getText().trim());
+        }
         assertThat(brandNameFld.getText().trim()).as("Brand Name Value is not same as " + Serenity.sessionVariableCalled("brandName").toString())
                 .isEqualTo(Serenity.sessionVariableCalled("brandName").toString());
         assertThat(vinValueFld.getText().trim()).as("Vin Value is not same as " + Serenity.sessionVariableCalled("vin").toString())
@@ -385,8 +385,8 @@ public class Dealer_ClaimsPage extends PageObject {
                     .contains(Serenity.sessionVariableCalled("estimatedTotalRepairCost").toString());
             clickOn(getDriver().findElement(By.xpath("//tbody/tr/td/a[contains(text(),'" + Serenity.sessionVariableCalled("damageLocation").toString().replaceFirst("\\s*\\([^\\)]*\\)$", "").trim() + "')]")));
             waitFor(damageIdFld);
-            Serenity.setSessionVariable("damageId_"+Serenity.sessionVariableCalled("damageLocation")).to(damageIdFld.getText().trim());
-            assertThat(claimStatusDescription.getText()).as("Damage Items Edit Page : Claim Status description is not correct. Actual :"+claimStatusDescription.getText()+"Expected : Claim Received; Under Review").
+            Serenity.setSessionVariable("damageId_" + Serenity.sessionVariableCalled("damageLocation")).to(damageIdFld.getText().trim());
+            assertThat(claimStatusDescription.getText()).as("Damage Items Edit Page : Claim Status description is not correct. Actual :" + claimStatusDescription.getText() + "Expected : Claim Received; Under Review").
                     isEqualTo("Claim Received; Under Review");
             verifyAlreadyAddedDamageItemsDetails();
             verifyAlreadyAddedDamageItemsEstimateDetails();
@@ -635,11 +635,13 @@ public class Dealer_ClaimsPage extends PageObject {
 
         }
     }
+
     private void selectEstimateDate(String estimateDaysDifference) {
         waitFor(calenderIcon);
         commonMethods.clickWithJavaScript(calenderIcon);
         selectSpecificEstimateDate(estimateDaysDifference, Serenity.sessionVariableCalled("arrivalDate").toString());
     }
+
     private void selectSpecificEstimateDate(String estimateDaysDifference, String arrivalDate) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -650,7 +652,7 @@ public class Dealer_ClaimsPage extends PageObject {
         String newDateOnly = newDateTime.format(outputFormatter);
 
         for (WebElementFacade day : calendarDaysList) {
-            if(Integer.parseInt(day.getText())==Integer.parseInt(newDateOnly.split("/")[0])) {
+            if (Integer.parseInt(day.getText()) == Integer.parseInt(newDateOnly.split("/")[0])) {
                 clickOn(day);
                 break;
             }
@@ -677,6 +679,7 @@ public class Dealer_ClaimsPage extends PageObject {
 
         }
     }
+
     public void navigateToDocumentsUploadPageAndUpload() {
         waitFor(documentsSideBarLink);
         clickOn(documentsSideBarLink);
