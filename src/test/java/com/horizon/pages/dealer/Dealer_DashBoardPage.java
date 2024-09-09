@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -186,9 +187,73 @@ public class Dealer_DashBoardPage extends PageObject {
             case "Incomplete Claims":
                 validateIncompleteClaimsFilterDetails();
                 break;
-            case "Claims Authorized : Please Repair":
-
+            case "Claims Authorised; Please Repair":
+                validateClaimsAuthorisedPleaseRepairFilterDetails();
+                break;
+            case "Claims Awaiting Authorisation":
+                validateClaimsAwaitingAuthorisationFilterDetails();
+                break;
+            case "Rejected Claims":
+                validateRejectedClaimsFilterDetails();
+                break;
+            case "Invoices Sent; Awaiting Payment":
+                validateInvoicesSentAwaitingPaymentFilterDetails();
+                break;
         }
+    }
+    private void validateInvoicesSentAwaitingPaymentFilterDetails() {
+        String brandName = Serenity.sessionVariableCalled("brandName").toString();
+        boolean isFilterFound = false;
+        WebElementFacade invoicesSentAwaitingPaymentFilter = null;
+        for (WebElementFacade forInformationFilter : forInformationSectionFilters) {
+            if (forInformationFilter.getText().contains("Invoices Sent; Awaiting Payment")) {
+                invoicesSentAwaitingPaymentFilter = forInformationFilter;
+                isFilterFound = true;
+                break;
+            }
+        }
+        assertThat(isFilterFound).as("Invoices Sent; Awaiting Payment - Filter is not found in the dashboard").isTrue();
+        assertThat(Serenity.sessionVariableCalled(brandName + "_invoicesSentAwaitingPaymentCounterValue").toString()).
+                as("Invoices Sent; Awaiting Payment Filter not updated. Its value is still" + Serenity.sessionVariableCalled(brandName + "_invoicesSentAwaitingPaymentCounterValue").toString())
+                .isNotEqualTo(invoicesSentAwaitingPaymentFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
+        waitFor(invoicesSentAwaitingPaymentFilter);
+        commonMethods.clickWithJavaScript(invoicesSentAwaitingPaymentFilter);
+    }
+    private void validateRejectedClaimsFilterDetails() {
+        String brandName = Serenity.sessionVariableCalled("brandName").toString();
+        boolean isFilterFound = false;
+        WebElementFacade rejectedClaimsFilter = null;
+        for (WebElementFacade forInformationFilter : forInformationSectionFilters) {
+            if (forInformationFilter.getText().contains("Rejected Claims")) {
+                rejectedClaimsFilter = forInformationFilter;
+                isFilterFound = true;
+                break;
+            }
+        }
+        assertThat(isFilterFound).as("Rejected Claims - Filter is not found in the dashboard").isTrue();
+        assertThat(Serenity.sessionVariableCalled(brandName + "_rejectedClaimsCounterValue").toString()).
+                as("Rejected Claims Filter not updated. Its value is still" + Serenity.sessionVariableCalled(brandName + "_rejectedClaimsCounterValue").toString())
+                .isNotEqualTo(rejectedClaimsFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
+        waitFor(rejectedClaimsFilter);
+        commonMethods.clickWithJavaScript(rejectedClaimsFilter);
+    }
+    private void validateClaimsAuthorisedPleaseRepairFilterDetails() {
+        String brandName = Serenity.sessionVariableCalled("brandName").toString();
+        boolean isFilterFound = false;
+        WebElementFacade claimsAuthorisedPleaseRepairFilter = null;
+        for (WebElementFacade toActionFilter : toActionSectionFilters) {
+            if (toActionFilter.getText().contains("Claims Authorised; Please Repair")) {
+                claimsAuthorisedPleaseRepairFilter = toActionFilter;
+                isFilterFound = true;
+                break;
+            }
+        }
+        assertThat(isFilterFound).as("Claims Authorised; Please Repair - Filter is not found in the dashboard").isTrue();
+        assertThat(Serenity.sessionVariableCalled(brandName + "_ClaimsAuthorisedCounterValue").toString()).
+                as("Claims Authorised; Please Repair Filter not updated. Its value is still" + Serenity.sessionVariableCalled(brandName + "_ClaimsAuthorisedCounterValue").toString())
+                .isNotEqualTo(claimsAuthorisedPleaseRepairFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
+        waitFor(claimsAuthorisedPleaseRepairFilter);
+        commonMethods.clickWithJavaScript(claimsAuthorisedPleaseRepairFilter);
     }
     public void validateIncompleteClaimsFilterDetails() {
         String brandName = Serenity.sessionVariableCalled("brandName").toString();
@@ -205,10 +270,29 @@ public class Dealer_DashBoardPage extends PageObject {
         assertThat(Serenity.sessionVariableCalled(brandName + "_IncompleteClaimsCounterValue").toString()).
                 as("Incomplete Claims Filter not updated. Its value is still" + Serenity.sessionVariableCalled(brandName + "_IncompleteClaimsCounterValue").toString())
                 .isNotEqualTo(incompleteClaimsFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
-        waitFor(incompleteClaimsFilter);
-        incompleteClaimsFilter.click();
 
-
+        if (Objects.isNull(Serenity.sessionVariableCalled("isClaimSubmitted"))) {
+            waitFor(incompleteClaimsFilter);
+            commonMethods.clickWithJavaScript(incompleteClaimsFilter);
+        }
+    }
+    public void validateClaimsAwaitingAuthorisationFilterDetails() {
+        String brandName = Serenity.sessionVariableCalled("brandName").toString();
+        boolean isFilterFound = false;
+        WebElementFacade claimsAwaitingAuthorisationFilter = null;
+        for (WebElementFacade forInformationFilter : forInformationSectionFilters) {
+            if (forInformationFilter.getText().contains("Claims Awaiting Authorisation")) {
+                claimsAwaitingAuthorisationFilter = forInformationFilter;
+                isFilterFound = true;
+                break;
+            }
+        }
+        assertThat(isFilterFound).as("Incomplete claims - Filter is not found in the dashboard").isTrue();
+        assertThat(Serenity.sessionVariableCalled(brandName + "_claimsAwaitingAuthorisationCounterValue").toString()).
+                as("Claims Awaiting Authorisation Filter not updated. Its value is still" + Serenity.sessionVariableCalled(brandName + "_claimsAwaitingAuthorisationCounterValue").toString())
+                .isNotEqualTo(claimsAwaitingAuthorisationFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
+        waitFor(claimsAwaitingAuthorisationFilter);
+        commonMethods.clickWithJavaScript(claimsAwaitingAuthorisationFilter);
     }
     private void verifyClaimsAuthorisedPleaseRepairFilter() {
         boolean isFilterFound = false;
@@ -260,7 +344,6 @@ public class Dealer_DashBoardPage extends PageObject {
                 .as("Invoices Rejected - Filter Counter value is missing").isTrue();
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_InvoicesRejectedCounterValue")
                 .to(invoicesRejectedFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
-
     }
     private void verifyClaimsPaidFilter() {
         boolean isFilterFound = false;
@@ -297,7 +380,7 @@ public class Dealer_DashBoardPage extends PageObject {
                 .as("Invoices Sent Awaiting Payment - Filter ToolTip is missing").isTrue();
         assertThat(invoicesSentAwaitingPaymentFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).isDisplayed())
                 .as("Invoices Sent Awaiting Payment - Filter Counter value is missing").isTrue();
-        Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_InvoicesSentAwaitingPaymentCounterValue")
+        Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_invoicesSentAwaitingPaymentCounterValue")
                 .to(invoicesSentAwaitingPaymentFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
     private void verifyRejectedClaimsFilter() {
@@ -316,7 +399,7 @@ public class Dealer_DashBoardPage extends PageObject {
                 .as("Rejected Claims - Filter ToolTip is missing").isTrue();
         assertThat(rejectedClaimsFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).isDisplayed())
                 .as("Rejected Claims - Filter Counter value is missing").isTrue();
-        Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_RejectedClaimsCounterValue")
+        Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_rejectedClaimsCounterValue")
                 .to(rejectedClaimsFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
     private void verifyClaimsAwaitingAuthorisationFilter() {

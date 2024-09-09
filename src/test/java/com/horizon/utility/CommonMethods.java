@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
 public class CommonMethods extends PageObject {
-    private @FindBy(xpath = "//div[contains(@class,'p-dropdown-items-wrapper')]")
+    private @FindBy(xpath = "//div[contains(@class,'ui-menu')] | //ul[contains(@id,'ui-id')]")
     WebElementFacade dropDownList;
     private @FindBy(xpath = "//input[@role='textbox']")
     WebElementFacade multiSelectDropDown;
@@ -45,9 +45,10 @@ public class CommonMethods extends PageObject {
     public void selectValueFromDropDown(WebElement dropdown, String value) {
         dropdown.click();
         waitABit(4000);
-        waitFor(dropDownList);
-        getDriver().findElement(By.xpath("//li[contains(.,'" + value + "')]")).click();
+        waitFor(getDriver().findElement(By.xpath("//a[contains(text(),'"+value+"')]")));
+        getDriver().findElement(By.xpath("//a[contains(text(),'"+value+"')]")).click();
     }
+
     public void selectFromMultiSelectDropDown(WebElementFacade dropdown, String value) {
         waitFor(dropdown);
         waitABit(4000);
