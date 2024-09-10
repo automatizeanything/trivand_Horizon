@@ -91,6 +91,7 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade damageLocationDropDown;
     private @FindBy(xpath = "//input[@id='damage_location_name']")
     WebElementFacade damageLocationDropDownField;
+    
     private @FindBy(xpath = "//span[@id='damage-location-help-inline']/i")
     WebElementFacade damageLocationDropDownTickIcon;
     private @FindBy(xpath = "//div[@id='damage']/fieldset/div[2]/div/a/i")
@@ -149,6 +150,7 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade damageIdFld;
     private @FindBy(xpath = "//div[contains(@class,'status-description')]/span")
     WebElementFacade claimStatusDescription;
+
     private @FindBy(id = "fileupload")
     WebElementFacade documentUploadLink;
     private @FindBy(xpath = "//img[contains(@alt,'pdf')]")
@@ -157,6 +159,14 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade claimSubmissionConfirmationMessage;
     private @FindBy(xpath = "(//a[contains(text(),'Home')])[2]")
     WebElementFacade backToHomeButton;
+    private @FindBy(xpath = "//table[contains(@class,'damage-chart')]/tbody/tr")
+    List<WebElementFacade> claimSummaryTableRows;
+    private @FindBy(xpath = "//div[@id='dealer_estimate']/div/div/div/span")
+    WebElementFacade claimSummaryEstimateNumberField;
+    private @FindBy(xpath = "//div[@id='dealer_estimate']/div/div[2]/div/span")
+    WebElementFacade claimSummaryEstimateDateField;
+    private @FindBy(xpath = "//table[contains(@class,'table-hover table-bordered')]/tbody/tr")
+    List<WebElementFacade> estimateSummaryTableRows;
 
 
     CommonMethods commonMethods = new CommonMethods();
@@ -529,6 +539,7 @@ public class Dealer_ClaimsPage extends PageObject {
         }
         assertThat(totalEstimatedLabourCostField.getText().trim().equals(Double.parseDouble((Serenity.sessionVariableCalled("noOfLabourHrs").toString())) *
                 Integer.parseInt(Serenity.sessionVariableCalled("labourAmountPerHr").toString())));
+        Serenity.setSessionVariable("totalEstimatedLabourCost").to(Double.parseDouble(totalEstimatedLabourCostField.getText().trim()));
 
         waitFor(estimatedPartsRepairCostField);
         if (Objects.nonNull(damageItemsData.get(0).get("partsCost"))) {
@@ -686,7 +697,6 @@ public class Dealer_ClaimsPage extends PageObject {
         //waitFor(documentUploadLink);
         uploadClaimSupportedDocuments();
     }
-
     private void uploadClaimSupportedDocuments() {
         upload("./src/test/resources/Documents/DocumentUpload.pdf").to(getDriver().findElement(By.id("fileupload")));
         waitABit(3000);
@@ -694,7 +704,6 @@ public class Dealer_ClaimsPage extends PageObject {
         assertThat(uploadedImage.isDisplayed()).as("uploaded image is not listed").isTrue();
         verifySideBarVerification("Documents_Uploaded");
     }
-
     public void submitClaim() {
         waitFor(readyForSubmissionBtn_enabled);
         clickOn(readyForSubmissionBtn_enabled);
@@ -705,12 +714,99 @@ public class Dealer_ClaimsPage extends PageObject {
         clickOn(backToHomeButton);
         Serenity.setSessionVariable("isClaimSubmitted").to("yes");
     }
-
     public void addVehicleDetails(String brandName) {
         waitFor(createNewClaimBtn);
         createNewClaimBtn.click();
         verifyClaimCreationPageHeaderDetails("Vehicle", "Open");
         verifySideBarVerification("Vehicle");
         updateVehicleDetails();
+    }
+    public void verifyClaimSummary(String claimStatus) {
+        waitFor(claimIdFld_AwaitingAcceptance);
+        claimIdFld_AwaitingAcceptance.click();
+        waitFor(claimSummaryTableRows.get(0));
+        for (WebElementFacade claim : claimSummaryTableRows) {
+            if (claim.findElement(By.xpath(".//td")).getText().
+                    contains(Serenity.sessionVariableCalled("damageLocation"))) {
+                verifyClaimSummaryGraphicRepresentation(claimStatus, claim);
+                verifyEstimateSummary(claimStatus);
+            }
+        }
+    }
+    private void verifyEstimateSummary(String claimStatus) {
+        waitFor(claimSummaryEstimateNumberField);
+        assertThat(claimSummaryEstimateNumberField.getText().trim()).as("Claim Summary : Already saved Estimate Number is not present").
+                isEqualTo(Serenity.sessionVariableCalled("estimateNumber").toString());
+        assertThat(claimSummaryEstimateDateField.getText().trim()).as("Claim Summary : Already saved Estimate Date is not present")
+                .isEqualTo(Serenity.sessionVariableCalled("estimateDate").toString());
+
+        for (WebElementFacade estimateItem : estimateSummaryTableRows) {
+            if (estimateItem.findElement(By.xpath(".//td")).getText().
+                    contains(Serenity.sessionVariableCalled("damageLocation"))) {
+                assertThat(estimateItem.findElement(By.xpath(".//td[2]")).getText()).
+                        as("Estimate Summary : Already saved Repair Method is not present").
+                        isEqualTo(Serenity.sessionVariableCalled("repairMethod"));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[4]")).getText())).
+                        as("Estimate Summary : Already saved Labour Rate per Hour is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("labourAmountPerHr").toString()));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[5]")).getText())).
+                        as("Estimate Summary : Already saved Labour Hours is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("noOfPaintLabourHrs").toString()));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[6]")).getText())).
+                        as("Estimate Summary : Already saved Labour Costs is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("totalEstimatedLabourCost").toString()));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[7]")).getText())).
+                        as("Estimate Summary : Already saved Parts Costs is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("partsCost").toString()));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[8]")).getText())).
+                        as("Estimate Summary : Already saved Paint/Materials Costs is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("paint/MaterialsCost").toString()));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[9]")).getText())).
+                        as("Estimate Summary : Already saved Miscellaneous Costs is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("miscellaneousCost").toString()));
+                assertThat(Double.parseDouble(estimateItem.findElement(By.xpath(".//td[10]")).getText())).
+                        as("Estimate Summary : Already saved Total Costs is not present").
+                        isEqualTo(Double.parseDouble(Serenity.sessionVariableCalled("estimatedTotalRepairCost").toString()));
+
+                verifyClaimStatusInEstimateSummary(claimStatus, estimateItem);
+            }
+        }
+    }
+    private void verifyClaimStatusInEstimateSummary(String claimStatus, WebElementFacade estimateItem) {
+        switch (claimStatus) {
+            case "Awaiting authorisation":
+                assertThat(estimateItem.findElement(By.xpath(".//td[3]")).getText()).
+                        as("Estimate Summary : Claim Status is not present").
+                        isEqualTo("Claim Received; Under Review");
+                break;
+        }
+    }
+    private void verifyClaimSummaryGraphicRepresentation(String claimStatus, WebElementFacade claimDetails) {
+        switch (claimStatus) {
+            case "Item rejected/ not repaired":
+                assertThat(claimDetails.findElement(By.xpath(".//td[2]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                        as("Circle representation is missing for the stage : Item rejected/ not repaired").isTrue();
+                break;
+            case "Awaiting authorisation":
+                assertThat(claimDetails.findElement(By.xpath(".//td[3]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                        as("Circle representation is missing for the stage : Awaiting authorisation").isTrue();
+                break;
+            case "Repairs authorised awaiting invoice":
+                assertThat(claimDetails.findElement(By.xpath(".//td[4]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                        as("Circle representation is missing for the stage : Repairs authorised awaiting invoice").isTrue();
+                break;
+            case "Invoice Sent; Awaiting payment":
+                assertThat(claimDetails.findElement(By.xpath(".//td[5]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                        as("Circle representation is missing for the stage : Invoice Sent; Awaiting payment").isTrue();
+                break;
+            case "Invoice Rejected":
+                assertThat(claimDetails.findElement(By.xpath(".//td[6]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                        as("Circle representation is missing for the stage : Invoice Rejected").isTrue();
+                break;
+            case "Invoice Paid":
+                assertThat(claimDetails.findElement(By.xpath(".//td[7]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                        as("Circle representation is missing for the stage : Invoice Paid").isTrue();
+                break;
+        }
     }
 }

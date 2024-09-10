@@ -44,4 +44,8 @@ public class Dealer_ClaimsSteps {
     public void iSubmitClaim() {
         claimsPage.submitClaim();
     }
+    @Step("I verify claim summary table")
+    public void verifyClaimSummaryTable(String claimStatus) {
+        claimsPage.verifyClaimSummary(claimStatus);
+    }
 }
