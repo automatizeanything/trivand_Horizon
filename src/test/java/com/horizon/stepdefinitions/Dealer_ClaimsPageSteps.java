@@ -50,4 +50,8 @@ public class Dealer_ClaimsPageSteps {
     public void iSubmitClaim() {
         claimsSteps.iSubmitClaim();
     }
+    @And("I verified that the claim summary table has a status of {string}")
+    public void iVerifyClaimSummaryTableHavingStatus(String claimStatus) {
+        claimsSteps.verifyClaimSummaryTable(claimStatus);
+    }
 }

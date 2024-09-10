@@ -26,6 +26,7 @@ Feature: Bentley : Validate Claim Creation
     Then I have validated "Incomplete Claims" fitter details in Dashboard
     And I have validated "Claims Awaiting Authorisation" fitter details in Dashboard
     And I navigate to My Claims page and validated the claims details with status "Awaiting acceptance from Sevatas"
+    And I verified that the claim summary table has a status of "Awaiting authorisation"
 
 
 
