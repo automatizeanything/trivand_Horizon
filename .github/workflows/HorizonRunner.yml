@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  PASSWORD: ${{ secrets.PASSWORD }}  
+  PASSWORD: V3h1cl3_50V3h1cl3_50!!!1980
 
 jobs:
   build:
