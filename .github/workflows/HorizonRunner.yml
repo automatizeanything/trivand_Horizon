@@ -24,6 +24,10 @@ jobs:
           java-version: '18'
           distribution: 'temurin'
           cache: maven
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+            chrome-version: 127.0.6533.119     
       - name: Running Automation Tests
         run: mvn clean verify -Dpassword=V3h1cl3_50V3h1cl3_50\!\!\!1980
       - name : Uploding Test Report
