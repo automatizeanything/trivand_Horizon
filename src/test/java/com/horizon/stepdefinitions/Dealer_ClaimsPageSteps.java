@@ -22,7 +22,7 @@ public class Dealer_ClaimsPageSteps {
     public void iAddVehicleDetailsForClaim(String brandName) {
         claimsSteps.addVehicleDetails(brandName);
     }
-    @And("I navigate to My Claims page and validated the claims details with status {string}")
+    @And("I navigate to My Claims page and validate the claims details with status {string}")
     public void iHaveValidatedClaimsDetailsInMyClaimsPage(String claimStatus) {
         claimsSteps.IVerifyClaimStatus(claimStatus);
     }
@@ -30,7 +30,7 @@ public class Dealer_ClaimsPageSteps {
     public void iNavigateBackToClaimsEditPageContinueTheEditing() {
         claimsSteps.ISelectClaimAndEdit();
     }
-    @And("I have added damage item details")
+    @And("I add the damage item details")
     public void iHaveAddedDamageItemDetails(DataTable damageItems) {
         claimsSteps.IHavAddedDamageItems(damageItems);
     }
@@ -38,7 +38,7 @@ public class Dealer_ClaimsPageSteps {
     public void iHaveAddedDamageItemEstimateDetails(DataTable damageItemsEstimateDetails) {
         claimsSteps.IHavAddedDamageItemsEstimateDetails(damageItemsEstimateDetails);
     }
-    @And("I save damage item estimate details as draft")
+    @And("I save the damage item estimate details as a draft")
     public void iSaveDamageItemEstimateDetailsAsDraft(DataTable damageItemsEstimateDetails) {
         claimsSteps.IHavSaveDamageItemsEstimateDetailsAsDraft(damageItemsEstimateDetails);
     }
@@ -50,7 +50,7 @@ public class Dealer_ClaimsPageSteps {
     public void iSubmitClaim() {
         claimsSteps.iSubmitClaim();
     }
-    @And("I verified that the claim summary table has a status of {string}")
+    @And("I verify that the claim summary table has a status of {string}")
     public void iVerifyClaimSummaryTableHavingStatus(String claimStatus) {
         claimsSteps.verifyClaimSummaryTable(claimStatus);
     }

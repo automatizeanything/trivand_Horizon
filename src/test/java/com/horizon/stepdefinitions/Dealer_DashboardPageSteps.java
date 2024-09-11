@@ -30,11 +30,11 @@ public class Dealer_DashboardPageSteps {
     public void iPerformASearchWithValueFromHomePage(String SearchType, String value) {
         dashBoardSteps.iPerformASearchFromHomePage(SearchType,value);
     }
-    @And("I verify details in dealer dashboard page")
+    @And("I verify the details on the dealer dashboard page")
     public void iVerifyDetailsInDealerDashboardPage() {
         dashBoardSteps.IVerifyDealerDashboardPage();
     }
-    @And("I have validated {string} fitter details in Dashboard")
+    @And("I validate the {string} fitter details in Dashboard")
     public void iHaveValidatedFitterDetailsInDashboard(String filterType) {
         dashBoardSteps.validateFilterDetails(filterType);
     }
