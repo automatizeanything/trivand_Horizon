@@ -4,6 +4,7 @@ import com.horizon.pages.dealer.Dealer_DashBoardPage;
 import com.horizon.stepdefinitions.steps.Dealer_ClaimsSteps;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import net.serenitybdd.annotations.Steps;
 
 public class Dealer_ClaimsPageSteps {
@@ -53,5 +54,29 @@ public class Dealer_ClaimsPageSteps {
     @And("I verify that the claim summary table has a status of {string}")
     public void iVerifyClaimSummaryTableHavingStatus(String claimStatus) {
         claimsSteps.verifyClaimSummaryTable(claimStatus);
+    }
+    @And("I add documents to the claim")
+    public void addDocumentsToClaim() {
+        claimsSteps.addDocumentsToClaim();
+    }
+    @And("I add invoice for the claim")
+    public void addInvoice() {
+        claimsSteps.addInvoice();
+    }
+    @And("I navigate to add invoice page")
+    public void navigateToAddInvoice() {
+        claimsSteps.navigateToAddInvoice();
+    }
+    @Then("The invoice creation should be successful")
+    public void verifyInvoiceCreation() {
+        claimsSteps.verifyInvoiceCreation();
+    }
+    @And("I verify the claim details in claim summary page")
+    public void verifyClaimSummary() {
+        claimsSteps.verifyClaimSummary();
+    }
+    @And("I verify the details in invoice page")
+    public void verifyInvoiceDetails() {
+        claimsSteps.verifyInvoiceDetails();
     }
 }

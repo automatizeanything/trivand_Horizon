@@ -48,4 +48,28 @@ public class Dealer_ClaimsSteps {
     public void verifyClaimSummaryTable(String claimStatus) {
         claimsPage.verifyClaimSummary(claimStatus);
     }
+    @Step("Add documents to claim")
+    public void addDocumentsToClaim() {
+        claimsPage.addDocumentsToClaim();
+    }
+    @Step("Add invoice to claim")
+    public void addInvoice() {
+        claimsPage.addInvoice();
+    }
+    @Step("Navigate to add invoice page")
+    public void navigateToAddInvoice() {
+        claimsPage.navigateToAddInvoice();
+    }
+    @Step("Verify invoice creation")
+    public void verifyInvoiceCreation() {
+        claimsPage.verifyInvoiceCreation();
+    }
+    @Step("Verify claim summary")
+    public void verifyClaimSummary() {
+        claimsPage.verifyClaimSummary();
+    }
+    @Step("Verify invoiced details")
+    public void verifyInvoiceDetails() {
+        claimsPage.verifyInvoiceDetails();
+    }
 }
