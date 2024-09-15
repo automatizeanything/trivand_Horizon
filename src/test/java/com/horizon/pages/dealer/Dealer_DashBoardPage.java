@@ -10,6 +10,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,12 @@ public class Dealer_DashBoardPage extends PageObject {
     List<WebElementFacade> toActionSectionFilters;
     private @FindBy(xpath = "//div[contains(text(),'For Information')]/following-sibling::div[contains(@class,'filters')]/a")
     List<WebElementFacade> forInformationSectionFilters;
-
+    private @FindBy(xpath = "//select[@id='search-type']")
+    WebElementFacade authorizedClaimSearchParam;
+    private @FindBy(xpath = "//input[@id='search']")
+    WebElementFacade authorizedClaimSearchInputField;
+    private @FindBy(xpath = "//button[@class='btn']")
+    WebElementFacade authorizedClaimSearchButton;
 
     CommonMethods commonMethods = new CommonMethods();
     String ItemValue = "";
@@ -58,6 +64,7 @@ public class Dealer_DashBoardPage extends PageObject {
                 ExpectedConditions.visibilityOf(adminDashBoard)
         );
     }
+
     public void performGlobalSearch(String SearchType, String value) {
         ItemValue = value;
         if (!SearchType.equalsIgnoreCase("VIN")) {
@@ -71,6 +78,7 @@ public class Dealer_DashBoardPage extends PageObject {
 
 
     }
+
     public void verifyTheDetailsDisplayed(String SearchType) {
         int UsersIndex = 0;
         switch (SearchType) {
@@ -114,10 +122,12 @@ public class Dealer_DashBoardPage extends PageObject {
                 System.out.println("Invalid search type.");
         }
     }
+
     public void navigateToSpecificPage(String pageName) {
         waitFor("//ul/li/a[contains(text(),'" + pageName + "')]");
         commonMethods.clickLinkByText("//ul/li/a[contains(text(),'" + pageName + "')]");
     }
+
     public void verifyDealerDashBoardPage() {
         assertThat(applicationLogo.isCurrentlyVisible()).as("Application Logo is missing").isTrue();
         assertThat(dashBoardHeader.isCurrentlyVisible()).as("Dashboard Header is missing").isTrue();
@@ -134,6 +144,7 @@ public class Dealer_DashBoardPage extends PageObject {
         verifyToActionSection();
         verifyForInformationSection();
     }
+
     private void verifyToActionSection() {
         String manufacture = Serenity.sessionVariableCalled("brandName");
         if (manufacture.equals("Bentley")) {
@@ -145,6 +156,7 @@ public class Dealer_DashBoardPage extends PageObject {
         }
 
     }
+
     private void verifyDamagesReportedViaDVMAppToCompleteFilter() {
         boolean isFilterFound = false;
         WebElementFacade damagesReportedViaDVMFilter = null;
@@ -164,6 +176,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_DVMAppCounterValue")
                 .to(damagesReportedViaDVMFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     private void verifyIncompleteClaimsFilter() {
         boolean isFilterFound = false;
         WebElementFacade incompleteClaimsFilter = null;
@@ -182,6 +195,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName").toString() + "_IncompleteClaimsCounterValue")
                 .to(incompleteClaimsFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     public void validateSpecificFilterDetails(String filterType) {
         switch (filterType) {
             case "Incomplete Claims":
@@ -201,6 +215,7 @@ public class Dealer_DashBoardPage extends PageObject {
                 break;
         }
     }
+
     private void validateInvoicesSentAwaitingPaymentFilterDetails() {
         String brandName = Serenity.sessionVariableCalled("brandName").toString();
         boolean isFilterFound = false;
@@ -219,6 +234,7 @@ public class Dealer_DashBoardPage extends PageObject {
         waitFor(invoicesSentAwaitingPaymentFilter);
         commonMethods.clickWithJavaScript(invoicesSentAwaitingPaymentFilter);
     }
+
     private void validateRejectedClaimsFilterDetails() {
         String brandName = Serenity.sessionVariableCalled("brandName").toString();
         boolean isFilterFound = false;
@@ -237,6 +253,7 @@ public class Dealer_DashBoardPage extends PageObject {
         waitFor(rejectedClaimsFilter);
         commonMethods.clickWithJavaScript(rejectedClaimsFilter);
     }
+
     private void validateClaimsAuthorisedPleaseRepairFilterDetails() {
         String brandName = Serenity.sessionVariableCalled("brandName").toString();
         boolean isFilterFound = false;
@@ -255,6 +272,7 @@ public class Dealer_DashBoardPage extends PageObject {
         waitFor(claimsAuthorisedPleaseRepairFilter);
         commonMethods.clickWithJavaScript(claimsAuthorisedPleaseRepairFilter);
     }
+
     public void validateIncompleteClaimsFilterDetails() {
         String brandName = Serenity.sessionVariableCalled("brandName").toString();
         boolean isFilterFound = false;
@@ -276,6 +294,7 @@ public class Dealer_DashBoardPage extends PageObject {
             commonMethods.clickWithJavaScript(incompleteClaimsFilter);
         }
     }
+
     public void validateClaimsAwaitingAuthorisationFilterDetails() {
         String brandName = Serenity.sessionVariableCalled("brandName").toString();
         boolean isFilterFound = false;
@@ -294,6 +313,7 @@ public class Dealer_DashBoardPage extends PageObject {
         waitFor(claimsAwaitingAuthorisationFilter);
         commonMethods.clickWithJavaScript(claimsAwaitingAuthorisationFilter);
     }
+
     private void verifyClaimsAuthorisedPleaseRepairFilter() {
         boolean isFilterFound = false;
         WebElementFacade claimsAuthorisedFilter = null;
@@ -313,6 +333,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_ClaimsAuthorisedCounterValue")
                 .to(claimsAuthorisedFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     private void verifyForInformationSection() {
         String manufacture = Serenity.sessionVariableCalled("brandName");
         if (manufacture.equals("Bentley")) {
@@ -326,6 +347,7 @@ public class Dealer_DashBoardPage extends PageObject {
             verifyInvoicesRejectedFilter();
         }
     }
+
     private void verifyInvoicesRejectedFilter() {
         boolean isFilterFound = false;
         WebElementFacade invoicesRejectedFilter = null;
@@ -345,6 +367,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_InvoicesRejectedCounterValue")
                 .to(invoicesRejectedFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     private void verifyClaimsPaidFilter() {
         boolean isFilterFound = false;
         WebElementFacade claimsPaidFilter = null;
@@ -364,6 +387,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_ClaimsPaidCounterValue")
                 .to(claimsPaidFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     private void verifyInvoicesSentAwaitingPaymentFilter() {
         boolean isFilterFound = false;
         WebElementFacade invoicesSentAwaitingPaymentFilter = null;
@@ -383,6 +407,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_invoicesSentAwaitingPaymentCounterValue")
                 .to(invoicesSentAwaitingPaymentFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     private void verifyRejectedClaimsFilter() {
         boolean isFilterFound = false;
         WebElementFacade rejectedClaimsFilter = null;
@@ -402,6 +427,7 @@ public class Dealer_DashBoardPage extends PageObject {
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_rejectedClaimsCounterValue")
                 .to(rejectedClaimsFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
     }
+
     private void verifyClaimsAwaitingAuthorisationFilter() {
         boolean isFilterFound = false;
         WebElementFacade claimsAwaitingAuthorisationFilter = null;
@@ -420,5 +446,23 @@ public class Dealer_DashBoardPage extends PageObject {
                 .as("Claims Awaiting Authorisation - Filter Counter value is missing").isTrue();
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_claimsAwaitingAuthorisationCounterValue")
                 .to(claimsAwaitingAuthorisationFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
+    }
+
+    public void selectClaimIDFromFilter(String claimID, String filterType) {
+        String claimId = null;
+        if (Objects.isNull(Serenity.sessionVariableCalled("claimId")))
+            claimId = claimID;
+        else claimId = Serenity.sessionVariableCalled("claimId").toString();
+        getDriver().findElement(By.xpath("//span[contains(text(),'"+filterType+"')]")).click();
+        selectClaimIDFromList(claimId);
+    }
+
+    private void selectClaimIDFromList(String claimId) {
+        waitForCondition().until(ExpectedConditions.visibilityOf(authorizedClaimSearchParam));
+        Select searchParam = new Select(authorizedClaimSearchParam);
+        searchParam.selectByVisibleText("Claim ID");
+        authorizedClaimSearchInputField.sendKeys(claimId);
+        commonMethods.clickOn(authorizedClaimSearchButton);
+        getDriver().findElement(By.xpath("//a[contains(text(),'" + claimId + "')]")).click();
     }
 }

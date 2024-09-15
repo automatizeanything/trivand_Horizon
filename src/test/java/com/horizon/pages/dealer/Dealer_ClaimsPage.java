@@ -8,6 +8,8 @@ import net.serenitybdd.core.Serenity;
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -91,7 +93,7 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade damageLocationDropDown;
     private @FindBy(xpath = "//input[@id='damage_location_name']")
     WebElementFacade damageLocationDropDownField;
-    
+
     private @FindBy(xpath = "//span[@id='damage-location-help-inline']/i")
     WebElementFacade damageLocationDropDownTickIcon;
     private @FindBy(xpath = "//div[@id='damage']/fieldset/div[2]/div/a/i")
@@ -153,7 +155,7 @@ public class Dealer_ClaimsPage extends PageObject {
 
     private @FindBy(id = "fileupload")
     WebElementFacade documentUploadLink;
-    private @FindBy(xpath = "//img[contains(@alt,'pdf')]")
+    private @FindBy(xpath = "(//div[contains(@class,'document-info')]//img[contains(@alt,'pdf')])[1]")
     WebElementFacade uploadedImage;
     private @FindBy(xpath = "//div[contains(@class,'alert-info')]")
     WebElementFacade claimSubmissionConfirmationMessage;
@@ -167,7 +169,56 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade claimSummaryEstimateDateField;
     private @FindBy(xpath = "//table[contains(@class,'table-hover table-bordered')]/tbody/tr")
     List<WebElementFacade> estimateSummaryTableRows;
-
+    private @FindBy(xpath = "//a[contains(text(),'Add Documents')]")
+    WebElementFacade addDocumentsButton;
+    private @FindBy(xpath = "//a[contains(text(),'Add Invoice')]")
+    WebElementFacade addInvoiceButton;
+    private @FindBy(xpath = "//input[contains(@class,'inv_submit')]")
+    WebElementFacade invoiceSubmitButton;
+    private @FindBy(id = "fileupload")
+    WebElement claimFileUploadDestination;
+    private @FindBy(id = "inline-file-upload")
+    WebElementFacade invoiceFileUploadDestination;
+    private @FindBy(xpath = "//input[@id='invoice_ref_number']")
+    WebElementFacade invoiceRefNumberField;
+    private @FindBy(xpath = "//a[contains(text(),'Confirm')]")
+    WebElementFacade confirmInvoiceSubmission;
+    private @FindBy(xpath = "//input[@id='dealer_terms']")
+    WebElementFacade acceptDeclaration;
+    private @FindBy(xpath = "//input[@id='inv-declarartion']")
+    WebElementFacade confirmDeclaration;
+    private @FindBy(xpath = "//div[contains(text(),'Invoice was successfully created.')]")
+    WebElementFacade invoiceCreatedMessage;
+    private @FindBy(xpath = "//span[@class='file-name-label' and contains(text(),'.pdf')]")
+    WebElementFacade uploadedInvoiceFile;
+    private @FindBy(xpath = "//h3[@class='header-title']/span[1]")
+    WebElementFacade claimSummaryHeader;
+    private @FindBy(xpath = "//table[contains(@class,'damage-chart')]/tfoot/tr[1]/td")
+    List<WebElementFacade> damageChartFooterRow;
+    private @FindBy(xpath = "//table[contains(@class,'damage-chart')]/tbody/tr[1]/td")
+    List<WebElementFacade> damageChartStatusRow;
+    private @FindBy(xpath = "//*[@id='authorised']/fieldset/table/tfoot/tr/td[5]")
+    WebElementFacade authorisedLabourCost;
+    private @FindBy(xpath = "//*[@id='authorised']/fieldset/table/tfoot/tr/td[6]")
+    WebElementFacade authorisedPartsCost;
+    private @FindBy(xpath = "//*[@id='authorised']/fieldset/table/tfoot/tr/td[9]")
+    WebElementFacade authorisedTotalRepairCost;
+    private @FindBy(xpath = "//*[@id='dealer_estimate']/table/tfoot/tr/td[6]")
+    WebElementFacade labourCostInEstimateDetails;
+    private @FindBy(xpath = "//*[@id='dealer_estimate']/table/tfoot/tr/td[7]")
+    WebElementFacade partsCostInEstimateDetails;
+    private @FindBy(xpath = "//*[@id='dealer_estimate']/table/tfoot/tr/td[10]")
+    WebElementFacade totalCostInEstimateDetails;
+    private @FindBy(xpath = "//a[contains(text(),'Estimate Details')]")
+    WebElementFacade estimateDetailsLink;
+    private @FindBy(xpath = "//*[@id='invoice_gross_amount']/strong/span/span")
+    WebElementFacade invoiceGrossAmount;
+    private @FindBy(xpath = "//table/tbody/tr[1]/td[1]/a[1]")
+    WebElementFacade invoiceNumber;
+    private @FindBy(xpath = "//table/tbody/tr[1]/td[5]")
+    WebElementFacade grossInvoiceAmount;
+    private @FindBy(xpath = "//table/tbody/tr[1]/td[6]/span")
+    WebElementFacade invoiceStatus;
 
     CommonMethods commonMethods = new CommonMethods();
     Dealer_DashBoardPage dashBoardPage = new Dealer_DashBoardPage();
@@ -303,7 +354,7 @@ public class Dealer_ClaimsPage extends PageObject {
         waitFor(calenderIcon);
         calenderIcon.click();
         waitFor(calenderIconArrowLeft);
-        selectSpecificDate();
+        selectSpecificDate(5);
         waitFor("//div[2]/table/tbody/tr/td/span[10]");
         getDriver().findElement(By.xpath("//div[2]/table/tbody/tr/td/span[10]")).click();
         waitFor("//span[contains(.,'9:25')]");
@@ -315,9 +366,9 @@ public class Dealer_ClaimsPage extends PageObject {
         Serenity.setSessionVariable("arrivalDate").to(newDateOnly + " 09:25");
     }
 
-    private void selectSpecificDate() {
+    private void selectSpecificDate(int noOfDaysBefore) {
         LocalDate currentDate = LocalDate.now();
-        LocalDate previousDate = currentDate.minusDays(5);
+        LocalDate previousDate = currentDate.minusDays(noOfDaysBefore);
         int dayOfMonth = previousDate.getDayOfMonth();
         for (WebElementFacade day : calendarDaysList) {
             if (Integer.parseInt(day.getText()) == dayOfMonth) {
@@ -385,13 +436,13 @@ public class Dealer_ClaimsPage extends PageObject {
         assertThat(damageItemsList.size()).as("Added damage item is not listed in Damage Items Table").isNotEqualTo(0);
         for (WebElementFacade damageItem : damageItemsList) {
             assertThat(damageItem.findElement(By.xpath(".//td")).getText().replaceAll("\\(.*?\\)", "").trim()).as("Damage Items List page doesn't contains already added damage location details" +
-                            Serenity.sessionVariableCalled("damageLocation").toString())
+                    Serenity.sessionVariableCalled("damageLocation").toString())
                     .isEqualTo(Serenity.sessionVariableCalled("damageLocation").toString().replaceAll("\\(.*?\\)", "").trim());
             assertThat(damageItem.findElement(By.xpath(".//td")).getText()).as("Damage Items List page doesn't contains already added damage type details" +
-                            Serenity.sessionVariableCalled("damageType").toString())
+                    Serenity.sessionVariableCalled("damageType").toString())
                     .contains(Serenity.sessionVariableCalled("damageType").toString());
             assertThat(damageItem.findElement(By.xpath(".//td[2]")).getText()).as("Damage Items List page doesn't contains already added damage's estimated total repair cost" +
-                            Serenity.sessionVariableCalled("estimatedTotalRepairCost").toString())
+                    Serenity.sessionVariableCalled("estimatedTotalRepairCost").toString())
                     .contains(Serenity.sessionVariableCalled("estimatedTotalRepairCost").toString());
             clickOn(getDriver().findElement(By.xpath("//tbody/tr/td/a[contains(text(),'" + Serenity.sessionVariableCalled("damageLocation").toString().replaceFirst("\\s*\\([^\\)]*\\)$", "").trim() + "')]")));
             waitFor(damageIdFld);
@@ -695,15 +746,18 @@ public class Dealer_ClaimsPage extends PageObject {
         waitFor(documentsSideBarLink);
         clickOn(documentsSideBarLink);
         //waitFor(documentUploadLink);
-        uploadClaimSupportedDocuments();
+        uploadClaimSupportedDocuments("DocumentUpload.pdf", "fileupload");
+        verifySideBarVerification("Documents_Uploaded");
     }
-    private void uploadClaimSupportedDocuments() {
-        upload("./src/test/resources/Documents/DocumentUpload.pdf").to(getDriver().findElement(By.id("fileupload")));
+
+    private void uploadClaimSupportedDocuments(String documentName, String webElementId) {
+        //upload("./src/test/resources/Documents/"+documentName).to(destination);
+        upload("./src/test/resources/Documents/" + documentName).to(getDriver().findElement(By.id(webElementId)));
         waitABit(3000);
         waitFor(uploadedImage);
         assertThat(uploadedImage.isDisplayed()).as("uploaded image is not listed").isTrue();
-        verifySideBarVerification("Documents_Uploaded");
     }
+
     public void submitClaim() {
         waitFor(readyForSubmissionBtn_enabled);
         clickOn(readyForSubmissionBtn_enabled);
@@ -714,6 +768,7 @@ public class Dealer_ClaimsPage extends PageObject {
         clickOn(backToHomeButton);
         Serenity.setSessionVariable("isClaimSubmitted").to("yes");
     }
+
     public void addVehicleDetails(String brandName) {
         waitFor(createNewClaimBtn);
         createNewClaimBtn.click();
@@ -721,6 +776,7 @@ public class Dealer_ClaimsPage extends PageObject {
         verifySideBarVerification("Vehicle");
         updateVehicleDetails();
     }
+
     public void verifyClaimSummary(String claimStatus) {
         waitFor(claimIdFld_AwaitingAcceptance);
         claimIdFld_AwaitingAcceptance.click();
@@ -733,6 +789,7 @@ public class Dealer_ClaimsPage extends PageObject {
             }
         }
     }
+
     private void verifyEstimateSummary(String claimStatus) {
         waitFor(claimSummaryEstimateNumberField);
         assertThat(claimSummaryEstimateNumberField.getText().trim()).as("Claim Summary : Already saved Estimate Number is not present").
@@ -772,6 +829,7 @@ public class Dealer_ClaimsPage extends PageObject {
             }
         }
     }
+
     private void verifyClaimStatusInEstimateSummary(String claimStatus, WebElementFacade estimateItem) {
         switch (claimStatus) {
             case "Awaiting authorisation":
@@ -781,6 +839,7 @@ public class Dealer_ClaimsPage extends PageObject {
                 break;
         }
     }
+
     private void verifyClaimSummaryGraphicRepresentation(String claimStatus, WebElementFacade claimDetails) {
         switch (claimStatus) {
             case "Item rejected/ not repaired":
@@ -808,5 +867,135 @@ public class Dealer_ClaimsPage extends PageObject {
                         as("Circle representation is missing for the stage : Invoice Paid").isTrue();
                 break;
         }
+    }
+
+    public void addDocumentsToClaim() {
+        waitForCondition().until(ExpectedConditions.visibilityOf(addDocumentsButton));
+        commonMethods.clickOn(addDocumentsButton);
+        upload("./src/test/resources/Documents/ClaimForm.pdf").to(getDriver().findElement(By.id("fileupload")));
+        waitABit(3000);
+    }
+
+    public void navigateToAddInvoice() {
+        waitForCondition().until(ExpectedConditions.visibilityOf(addInvoiceButton));
+        commonMethods.clickOn(addInvoiceButton);
+        waitForCondition().until(ExpectedConditions.visibilityOf(invoiceSubmitButton));
+    }
+
+    public void addInvoice() {
+        uploadInvoiceFile();
+        addInvoiceDetails();
+        submitInvoice();
+    }
+
+    private void uploadInvoiceFile() {
+        upload("./src/test/resources/Documents/Invoice.pdf").to(getDriver().findElement(By.id("inline-file-upload")));
+        waitABit(3000);
+        waitFor(uploadedInvoiceFile);
+    }
+
+    private void addInvoiceDetails() {
+        String invoiceNumber = commonMethods.randomNumbergenerator(8);
+        typeInto(invoiceRefNumberField, invoiceNumber);
+        Serenity.setSessionVariable("invoiceRefNumber").to(invoiceNumber);
+        calenderIcon.click();
+        waitABit(2000);
+        selectSpecificDate(0);
+        Serenity.setSessionVariable("invoiceGrossAmount").to(invoiceGrossAmount.getText().trim());
+    }
+
+    private void submitInvoice() {
+        commonMethods.scrollWithJavaScript(invoiceSubmitButton);
+        commonMethods.clickOn(invoiceSubmitButton);
+        waitForCondition().until(ExpectedConditions.visibilityOf(confirmInvoiceSubmission));
+        commonMethods.clickOn(confirmInvoiceSubmission);
+        waitForCondition().until(ExpectedConditions.visibilityOf(acceptDeclaration));
+        commonMethods.clickOn(acceptDeclaration);
+        commonMethods.clickOn(confirmDeclaration);
+    }
+
+    public void verifyInvoiceCreation() {
+        assertThat(invoiceCreatedMessage.isDisplayed()).as("Invoice creation success message not displayed").isTrue();
+        assertThat(invoiceNumber.getText()).as("Invoice number mismatch in invoices page").isEqualTo(Serenity.sessionVariableCalled("invoiceRefNumber").toString());
+        assertThat(grossInvoiceAmount.getText().substring(3,grossInvoiceAmount.getText().length())).as("Gross invoice amount mismatch in invoices page").isEqualTo(Serenity.sessionVariableCalled("invoiceGrossAmount").toString());
+        assertThat(invoiceStatus.getText()).as("Invoice status is wrong in invoices page").isEqualTo("Awaiting Payment");
+    }
+
+    public void verifyClaimSummary() {
+        //verifyClaimHeader();
+        verifyClaimStatusInDamageChart("Repairs authorised awaiting invoice");
+        //verifyEstimateSummary();
+    }
+
+    private void verifyClaimHeader() {
+        String claimId = claimSummaryHeader.getText().substring(claimSummaryHeader.getText().lastIndexOf("|") + 2, claimSummaryHeader.getText().length());
+        assertThat(claimId).as("Claim ID in header is not matching with actual claim ID").isEqualTo(Serenity.sessionVariableCalled("claimId").toString());
+        assertThat(claimStatus.getText()).as("Claim status in header is not correct").isEqualTo("Open");
+    }
+
+    private void verifyClaimStatusInDamageChart(String expectedStatus) {
+        System.out.println(damageChartFooterRow.get(4).getText());
+        boolean status = false;
+        int footerIndex = 1;
+        for (WebElementFacade footerWebElement : damageChartFooterRow) {
+            if (footerWebElement.getText().equals(expectedStatus)) {
+                break;
+            }
+            footerIndex++;
+        }
+        int statusIndex=1;
+        String str = "//table[contains(@class,'damage-chart')]/tbody/tr[1]/td";
+        try {
+            if (getDriver().findElement(By.xpath(str+"["+footerIndex+"]/div")).getAttribute("class").contains("circle")) {
+                status=true;
+            }
+        } catch (NoSuchElementException e) {
+            for (WebElementFacade statusWebElement : damageChartStatusRow) {
+                if (statusWebElement.findElements(By.xpath("./div")).size() > 0) {
+                    if (statusWebElement.findElement(By.xpath("./div")).getAttribute("class").contains("circle")) {
+                        break;
+                    }
+                }
+                statusIndex++;
+            }
+        }
+       /* if (getDriver().findElement(By.xpath(str+"["+footerindex+"]/div")).getAttribute("class").contains("circle")) {
+            status=true;
+        } else {
+            for (WebElementFacade statusWebElement : damageChartStatusRow) {
+                if (statusWebElement.findElements(By.xpath("./div")).size() > 0) {
+                    if (statusWebElement.findElement(By.xpath("./div")).getAttribute("class").contains("circle")) {
+                        break;
+                    }
+                }
+                statusIndex++;
+            }
+        }*/
+        assertThat(status).as("Claim status is incorrect in claim status chart. Expected status is "+expectedStatus+ ", But status showing in damage chart is "+ damageChartFooterRow.get(statusIndex-1).getText()).isTrue();
+    }
+    private void verifyEstimateSummary() {
+        verifyRepairAuthorised();
+        verifyEstimateDetails();
+    }
+    private void verifyRepairAuthorised() {
+        //replace serenity session variable name while integration
+        assertThat(authorisedLabourCost.getText()).as("Authorised labour cost is incorrect in Estimate summary").isEqualTo(Serenity.sessionVariableCalled("").toString());
+        //replace serenity session variable name while integration
+        assertThat(authorisedPartsCost.getText()).as("Authorised parts cost is incorrect in Estimate summary").isEqualTo(Serenity.sessionVariableCalled("").toString());
+        //replace serenity session variable name while integration
+        assertThat(authorisedTotalRepairCost.getText()).as("Authorised total repair cost is incorrect in Estimate summary").isEqualTo(Serenity.sessionVariableCalled("").toString());
+    }
+    private void verifyEstimateDetails() {
+        commonMethods.clickOn(estimateDetailsLink);
+        //replace serenity session variable name while integration
+        assertThat(labourCostInEstimateDetails.getText()).as("Labour cost in estimate details is incorrect").isEqualTo(Serenity.sessionVariableCalled("").toString());
+        //replace serenity session variable name while integration
+        assertThat(partsCostInEstimateDetails.getText()).as("Parts cost in estimate details is incorrect").isEqualTo(Serenity.sessionVariableCalled("").toString());
+        //replace serenity session variable name while integration
+        assertThat(totalCostInEstimateDetails.getText()).as("Total cost in estimate details is incorrect").isEqualTo(Serenity.sessionVariableCalled("").toString());
+    }
+    public void verifyInvoiceDetails() {
+        //replace serenity session variable name while integration
+        assertThat(invoiceGrossAmount.getText().trim()).as("Gross amount in invoice page is incorrect").isEqualTo(Serenity.sessionVariableCalled("").toString());
     }
 }
