@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -819,31 +820,24 @@ public class Dealer_ClaimsPage extends PageObject {
     }
 
     private void verifyClaimSummaryGraphicRepresentation(String claimStatus, WebElementFacade claimDetails) {
-        switch (claimStatus) {
-            case "Item rejected/ not repaired":
-                assertThat(claimDetails.findElement(By.xpath(".//td[2]/div[contains(@class,'circle red-circle')]")).isDisplayed()).
-                        as("Circle representation is missing for the stage : Item rejected/ not repaired").isTrue();
-                break;
-            case "Awaiting authorisation":
-                assertThat(claimDetails.findElement(By.xpath(".//td[3]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
-                        as("Circle representation is missing for the stage : Awaiting authorisation").isTrue();
-                break;
-            case "Repairs authorised awaiting invoice":
-                assertThat(claimDetails.findElement(By.xpath(".//td[4]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
-                        as("Circle representation is missing for the stage : Repairs authorised awaiting invoice").isTrue();
-                break;
-            case "Invoice Sent; Awaiting payment":
-                assertThat(claimDetails.findElement(By.xpath(".//td[5]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
-                        as("Circle representation is missing for the stage : Invoice Sent; Awaiting payment").isTrue();
-                break;
-            case "Invoice Rejected":
-                assertThat(claimDetails.findElement(By.xpath(".//td[6]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
-                        as("Circle representation is missing for the stage : Invoice Rejected").isTrue();
-                break;
-            case "Invoice Paid":
-                assertThat(claimDetails.findElement(By.xpath(".//td[7]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
-                        as("Circle representation is missing for the stage : Invoice Paid").isTrue();
-                break;
+        Map<String, int[]> statusToColumnAndColor = new HashMap<>();
+        statusToColumnAndColor.put("Item rejected/ not repaired", new int[]{2, 0});
+        statusToColumnAndColor.put("Awaiting authorisation", new int[]{3, 1});
+        statusToColumnAndColor.put("Repairs authorised awaiting invoice", new int[]{4, 1});
+        statusToColumnAndColor.put("Invoice Sent; Awaiting payment", new int[]{5, 1});
+        statusToColumnAndColor.put("Invoice Rejected", new int[]{6, 0});
+        statusToColumnAndColor.put("Invoice Paid", new int[]{7, 1});
+
+        if (statusToColumnAndColor.containsKey(claimStatus)) {
+            int columnIndex = statusToColumnAndColor.get(claimStatus)[0];
+            String circleColorClass = statusToColumnAndColor.get(claimStatus)[1] == 0 ? "red-circle" : "green-circle";
+
+            String xpath = String.format(".//td[%d]/div[contains(@class,'circle %s')]", columnIndex, circleColorClass);
+
+            assertThat(claimDetails.findElement(By.xpath(xpath)).isDisplayed())
+                    .as("Circle representation is missing for the stage: " + claimStatus).isTrue();
+        } else {
+            throw new IllegalArgumentException("Invalid claim status: " + claimStatus);
         }
     }
 

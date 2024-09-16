@@ -1,6 +1,6 @@
 Feature: Bentley : Validate Claim Creation
 
-  @Bentley @Dealer @ClaimCreation111 @FieldValidation
+  @Bentley @Dealer @ClaimCreation @FieldValidation
   Scenario: As a Bentley Dealer, I need to submit a claim (within 2 days of arrival) and send it for approval
     Given I am in the login page of Horizon application
     When I login into Horizon application as a "Bentley" "Dealer"
