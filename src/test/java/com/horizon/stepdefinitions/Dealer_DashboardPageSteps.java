@@ -2,6 +2,7 @@ package com.horizon.stepdefinitions;
 
 import com.horizon.stepdefinitions.steps.Dealer_DashBoardSteps;
 import com.horizon.stepdefinitions.steps.LoginSteps;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import net.serenitybdd.annotations.Steps;

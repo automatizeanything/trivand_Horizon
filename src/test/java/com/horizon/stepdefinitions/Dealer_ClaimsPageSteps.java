@@ -4,6 +4,7 @@ import com.horizon.pages.dealer.Dealer_DashBoardPage;
 import com.horizon.stepdefinitions.steps.Dealer_ClaimsSteps;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import net.serenitybdd.annotations.Steps;
 
 public class Dealer_ClaimsPageSteps {
@@ -14,13 +15,13 @@ public class Dealer_ClaimsPageSteps {
     @Steps
     Dealer_DashBoardPage dashBoardPageSteps;
 
-    @And("I save a new claim for {string} as draft")
-    public void iSaveANewClaimAsDraft(String brandName) {
-        claimsSteps.ISaveClaimAsDraft(brandName);
+    @And("I save a new claim as draft")
+    public void iSaveANewClaimAsDraft(DataTable claimDetails) {
+        claimsSteps.ISaveClaimAsDraft(claimDetails);
     }
-    @And("I have added vehicle details for {string}")
-    public void iAddVehicleDetailsForClaim(String brandName) {
-        claimsSteps.addVehicleDetails(brandName);
+    @And("I have added vehicle details")
+    public void iAddVehicleDetailsForClaim(DataTable claimDetails) {
+        claimsSteps.addVehicleDetails(claimDetails);
     }
     @And("I navigate to My Claims page and validate the claims details with status {string}")
     public void iHaveValidatedClaimsDetailsInMyClaimsPage(String claimStatus) {
@@ -50,8 +51,16 @@ public class Dealer_ClaimsPageSteps {
     public void iSubmitClaim() {
         claimsSteps.iSubmitClaim();
     }
+    @And("I try to submit the claim")
+    public void iTryToSubmitClaim() {
+        claimsSteps.iTryToSubmitClaim();
+    }
     @And("I verify that the claim summary table has a status of {string}")
     public void iVerifyClaimSummaryTableHavingStatus(String claimStatus) {
         claimsSteps.verifyClaimSummaryTable(claimStatus);
+    }
+    @Then("Claim challenge dialog box should be displayed and I select {string} option")
+    public void claimChallengeDialogBoxShouldBeDisplayed(String option) {
+        claimsSteps.verifyClaimChallengeDialogBoxAndSelectOption(option);
     }
 }

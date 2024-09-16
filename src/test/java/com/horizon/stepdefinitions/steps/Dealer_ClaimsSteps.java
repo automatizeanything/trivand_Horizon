@@ -8,13 +8,13 @@ public class Dealer_ClaimsSteps {
 
     Dealer_ClaimsPage claimsPage;
 
-    @Step("Save a new claim for {string} as draft")
-    public void ISaveClaimAsDraft(String brandName) {
-        claimsPage.saveAClaimAsDraft(brandName);
+    @Step("Save a new claim as draft")
+    public void ISaveClaimAsDraft(DataTable claimDetails) {
+        claimsPage.saveAClaimAsDraft(claimDetails);
     }
-    @Step("Add Vehicle details for {string}")
-    public void addVehicleDetails(String brandName) {
-        claimsPage.addVehicleDetails(brandName);
+    @Step("Add Vehicle details")
+    public void addVehicleDetails(DataTable claimDetails) {
+        claimsPage.addVehicleDetails(claimDetails);
     }
     @Step("Verify a claim status as {string}")
     public void IVerifyClaimStatus(String claimStatus) {
@@ -44,8 +44,16 @@ public class Dealer_ClaimsSteps {
     public void iSubmitClaim() {
         claimsPage.submitClaim();
     }
+    @Step("I try to submit claim")
+    public void iTryToSubmitClaim() {
+        claimsPage.tryToSubmitClaim();
+    }
     @Step("I verify claim summary table")
     public void verifyClaimSummaryTable(String claimStatus) {
         claimsPage.verifyClaimSummary(claimStatus);
+    }
+    @Step("I verify claim summary table")
+    public void verifyClaimChallengeDialogBoxAndSelectOption(String option) {
+        claimsPage.verifyClaimChallengeDialogBoxAndSelectOption(option);
     }
 }
