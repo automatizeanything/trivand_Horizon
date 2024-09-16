@@ -6,7 +6,9 @@ Feature: Bentley : E2E Flows
     When I login into Horizon application as a "Bentley" "Dealer"
     Then I can navigate to dealer dashboard page
     And I verify the details on the dealer dashboard page
-    And I have added vehicle details for "Bentley"
+    And I have added vehicle details
+      | brandName | arrivalDaysDifference |
+      | Bentley   | 3                     |
     And I add the damage item details
       | damageItemsDetails |
       | yes                |

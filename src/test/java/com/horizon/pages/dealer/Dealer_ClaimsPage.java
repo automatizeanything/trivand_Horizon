@@ -91,7 +91,7 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade damageLocationDropDown;
     private @FindBy(xpath = "//input[@id='damage_location_name']")
     WebElementFacade damageLocationDropDownField;
-    
+
     private @FindBy(xpath = "//span[@id='damage-location-help-inline']/i")
     WebElementFacade damageLocationDropDownTickIcon;
     private @FindBy(xpath = "//div[@id='damage']/fieldset/div[2]/div/a/i")
@@ -167,6 +167,18 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade claimSummaryEstimateDateField;
     private @FindBy(xpath = "//table[contains(@class,'table-hover table-bordered')]/tbody/tr")
     List<WebElementFacade> estimateSummaryTableRows;
+    private @FindBy(xpath = "//div[@id='claim-challenge-dialog']/div")
+    WebElementFacade claimChallengeDialogBox;
+    private @FindBy(xpath = "//div[@id='claim-challenge-dialog']/div/h4")
+    WebElementFacade claimChallengeDialogBoxHeader;
+    private @FindBy(xpath = "//div[@id='claim-challenge-dialog']/div[2]/h5/strong")
+    WebElementFacade claimAcceptanceRuleDetailsSection;
+    private @FindBy(id = "challenging_reason")
+    WebElementFacade challengingReasonTextFld;
+    private @FindBy(id = "accept-rejection-btn")
+    WebElementFacade challengeAcceptRejectionBtn;
+    private @FindBy(id = "challenge-btn")
+    WebElementFacade challengeBtn;
 
 
     CommonMethods commonMethods = new CommonMethods();
@@ -179,20 +191,21 @@ public class Dealer_ClaimsPage extends PageObject {
         );
     }
 
-    public void saveAClaimAsDraft(String brandName) {
+    public void saveAClaimAsDraft(DataTable claimDetails) {
         waitFor(createNewClaimBtn);
         createNewClaimBtn.click();
         verifyClaimCreationPageHeaderDetails("Vehicle", "Open");
         verifySideBarVerification("Vehicle");
-        updateVehicleDetails();
+        updateVehicleDetails(claimDetails);
     }
 
-    private void updateVehicleDetails() {
-        verifyFieldValidationsVehicleDetailsPage();
+    private void updateVehicleDetails(DataTable claimDetails) {
+        verifyFieldValidationsVehicleDetailsPage(claimDetails);
         nextBtn.click();
     }
 
-    private void verifyFieldValidationsVehicleDetailsPage() {
+    private void verifyFieldValidationsVehicleDetailsPage(DataTable claimDetails) {
+        List<Map<String, String>> claimDetailsData = claimDetails.asMaps(String.class, String.class);
         waitFor(nextBtn);
         typeInto(vinTxtFld, "2FM");
         nextBtn.click();
@@ -203,7 +216,7 @@ public class Dealer_ClaimsPage extends PageObject {
         vehicleSpecTxtFld.click();
         nextBtn.click();
         commonMethods.verifyValidationMessage(Constant.ARRIVAL_DATE_VALIDATION_MESSAGE);
-        selectArrivalDate();
+        selectArrivalDate(claimDetailsData.get(0).get("arrivalDaysDifference"));
         waitABit(4000);
         vinTxtFld.click();
         commonMethods.clickWithJavaScript(nextBtn);
@@ -299,25 +312,25 @@ public class Dealer_ClaimsPage extends PageObject {
         }
     }
 
-    private void selectArrivalDate() {
+    private void selectArrivalDate(String arrivalDaysDifference) {
         waitFor(calenderIcon);
         calenderIcon.click();
         waitFor(calenderIconArrowLeft);
-        selectSpecificDate();
+        selectSpecificDate(arrivalDaysDifference);
         waitFor("//div[2]/table/tbody/tr/td/span[10]");
         getDriver().findElement(By.xpath("//div[2]/table/tbody/tr/td/span[10]")).click();
         waitFor("//span[contains(.,'9:25')]");
         getDriver().findElement(By.xpath("//span[contains(.,'9:25')]")).click();
         LocalDate currentDate = LocalDate.now();
-        LocalDate previousDate = currentDate.minusDays(5);
+        LocalDate previousDate = currentDate.minusDays(Long.parseLong(arrivalDaysDifference));
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String newDateOnly = previousDate.format(outputFormatter);
         Serenity.setSessionVariable("arrivalDate").to(newDateOnly + " 09:25");
     }
 
-    private void selectSpecificDate() {
+    private void selectSpecificDate(String arrivalDaysDifference) {
         LocalDate currentDate = LocalDate.now();
-        LocalDate previousDate = currentDate.minusDays(5);
+        LocalDate previousDate = currentDate.minusDays(Long.parseLong(arrivalDaysDifference));
         int dayOfMonth = previousDate.getDayOfMonth();
         for (WebElementFacade day : calendarDaysList) {
             if (Integer.parseInt(day.getText()) == dayOfMonth) {
@@ -697,6 +710,7 @@ public class Dealer_ClaimsPage extends PageObject {
         //waitFor(documentUploadLink);
         uploadClaimSupportedDocuments();
     }
+
     private void uploadClaimSupportedDocuments() {
         upload("./src/test/resources/Documents/DocumentUpload.pdf").to(getDriver().findElement(By.id("fileupload")));
         waitABit(3000);
@@ -704,6 +718,7 @@ public class Dealer_ClaimsPage extends PageObject {
         assertThat(uploadedImage.isDisplayed()).as("uploaded image is not listed").isTrue();
         verifySideBarVerification("Documents_Uploaded");
     }
+
     public void submitClaim() {
         waitFor(readyForSubmissionBtn_enabled);
         clickOn(readyForSubmissionBtn_enabled);
@@ -714,13 +729,21 @@ public class Dealer_ClaimsPage extends PageObject {
         clickOn(backToHomeButton);
         Serenity.setSessionVariable("isClaimSubmitted").to("yes");
     }
-    public void addVehicleDetails(String brandName) {
+
+    public void tryToSubmitClaim() {
+        waitFor(readyForSubmissionBtn_enabled);
+        clickOn(readyForSubmissionBtn_enabled);
+        Serenity.setSessionVariable("isClaimSubmitted").to("no");
+    }
+
+    public void addVehicleDetails(DataTable claimDetails) {
         waitFor(createNewClaimBtn);
         createNewClaimBtn.click();
         verifyClaimCreationPageHeaderDetails("Vehicle", "Open");
         verifySideBarVerification("Vehicle");
-        updateVehicleDetails();
+        updateVehicleDetails(claimDetails);
     }
+
     public void verifyClaimSummary(String claimStatus) {
         waitFor(claimIdFld_AwaitingAcceptance);
         claimIdFld_AwaitingAcceptance.click();
@@ -733,6 +756,7 @@ public class Dealer_ClaimsPage extends PageObject {
             }
         }
     }
+
     private void verifyEstimateSummary(String claimStatus) {
         waitFor(claimSummaryEstimateNumberField);
         assertThat(claimSummaryEstimateNumberField.getText().trim()).as("Claim Summary : Already saved Estimate Number is not present").
@@ -772,6 +796,7 @@ public class Dealer_ClaimsPage extends PageObject {
             }
         }
     }
+
     private void verifyClaimStatusInEstimateSummary(String claimStatus, WebElementFacade estimateItem) {
         switch (claimStatus) {
             case "Awaiting authorisation":
@@ -779,12 +804,24 @@ public class Dealer_ClaimsPage extends PageObject {
                         as("Estimate Summary : Claim Status is not present").
                         isEqualTo("Claim Received; Under Review");
                 break;
+            case "Item rejected/ not repaired":
+                assertThat(estimateItem.getAttribute("class")).
+                        as("Estimate Summary : Table row is not in red color").
+                        isEqualTo("red-circle");
+                assertThat(estimateItem.findElement(By.xpath(".//td[3]")).getText()).
+                        as("Estimate Summary : Claim Status is not present").
+                        isEqualTo("Rejected");
+                assertThat(estimateItem.findElement(By.xpath(".//td[3]/span/a")).getAttribute("data-original-title").trim()).
+                        as("Estimate Summary : Claim Rejection info is not present in tooltip").
+                        isEqualTo("Reason: Claim was submitted late");
+                break;
         }
     }
+
     private void verifyClaimSummaryGraphicRepresentation(String claimStatus, WebElementFacade claimDetails) {
         switch (claimStatus) {
             case "Item rejected/ not repaired":
-                assertThat(claimDetails.findElement(By.xpath(".//td[2]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
+                assertThat(claimDetails.findElement(By.xpath(".//td[2]/div[contains(@class,'circle red-circle')]")).isDisplayed()).
                         as("Circle representation is missing for the stage : Item rejected/ not repaired").isTrue();
                 break;
             case "Awaiting authorisation":
@@ -807,6 +844,51 @@ public class Dealer_ClaimsPage extends PageObject {
                 assertThat(claimDetails.findElement(By.xpath(".//td[7]/div[contains(@class,'circle green-circle')]")).isDisplayed()).
                         as("Circle representation is missing for the stage : Invoice Paid").isTrue();
                 break;
+        }
+    }
+
+    public void verifyClaimChallengeDialogBoxAndSelectOption(String option) {
+        waitFor(claimChallengeDialogBox);
+        assertThat(claimChallengeDialogBoxHeader.getText().trim()).as("Claim Challenge Dialog box header is not correct").
+                isEqualTo(Constant.CLAIM_CHALLENGE_DIALOG_BOX_HEADER);
+        claimSubmissionRule();
+        waitFor(challengingReasonTextFld);
+        selectClaimChallengeOption(option);
+    }
+
+    private void claimSubmissionRule() {
+        if (Serenity.sessionVariableCalled("brandName").toString().equals("Bentely"))
+            assertThat(claimAcceptanceRuleDetailsSection.getText().trim()).as(Serenity.sessionVariableCalled("brandName").toString() +
+                    " claim submission rule is missing").isEqualTo(Constant.BENTLEY_CLAIM_SUBMISSION_RULE);
+    }
+
+    private void selectClaimChallengeOption(String option) {
+        if (option.equals("Accept Rejection")) {
+            typeInto(challengingReasonTextFld, "Rejection Accepted");
+            waitFor(challengeAcceptRejectionBtn);
+            clickOn(challengeAcceptRejectionBtn);
+            assertThat(damageItemsPageInfo.getText()).as("Accept Rejection : Confirmation text is missing").
+                    contains(Constant.CLAIM_ACCEPT_REJECTION_CONFIRMATION_TXT);
+            Serenity.setSessionVariable("isClaimSubmitted").to("no");
+            assertThat(claimStatus.getText().trim()).as("Accept Rejection : Claim status not changed").
+                    isEqualTo("Closed - Incomplete");
+            assertThat(claimSourceDetail.getText().trim()).as("Accept Rejection : Claim Rejection details is missing").
+                    isEqualTo("Submitted Late");
+            waitFor(backToHomeButton);
+            clickOn(backToHomeButton);
+        } else {
+            typeInto(challengingReasonTextFld, "Challenged");
+            waitFor(challengeBtn);
+            clickOn(challengeBtn);
+            assertThat(damageItemsPageInfo.getText()).as("Accept Rejection : Confirmation text is missing").
+                    contains(Constant.CLAIM_ACCEPT_CHALLENGE_CONFIRMATION_TXT);
+            Serenity.setSessionVariable("isClaimSubmitted").to("yes");
+            assertThat(claimStatus.getText().trim()).as("Accept Rejection : Claim status not changed").
+                    isEqualTo("Open");
+            assertThat(claimSourceDetail.getText().trim()).as("Accept Rejection : Claim Rejection details is missing").
+                    isEqualTo("Challenged");
+            waitFor(backToHomeButton);
+            clickOn(backToHomeButton);
         }
     }
 }

@@ -23,6 +23,11 @@ public class Constant {
     public static final String SEVERITY_LEVEL_VALIDATION_MESSAGE = "Please provide a Severity Level";
     public static final String CLAIM_SUBMISSION_CONFIRMATION_MESSAGE ="Thank you for your claim which has been submitted to the Sevatas claims team. We will respond once the claim has been reviewed.\n" +
                                                                        "Please do not repair the vehicle until you have written confirmation from Sevatas.";
+    public static final String CLAIM_CHALLENGE_DIALOG_BOX_HEADER ="Claim is rejected because it was submitted too late";
+    public static final String BENTLEY_CLAIM_SUBMISSION_RULE = "Under Bentley Motors Ltd's claim submission procedures, you have 3 working days to submit the claim after the vehicle delivery.";
+    public static final String CLAIM_ACCEPT_REJECTION_CONFIRMATION_TXT = "Claim is rejected as it was submitted too late.";
+    public static final String CLAIM_ACCEPT_CHALLENGE_CONFIRMATION_TXT = "Thank you for your claim which has been submitted to the Sevatas claims team. We will respond once the claim has been reviewed.\n" +
+                                                                            "Please do not repair the vehicle until you have written confirmation from Sevatas";
 
 
 
