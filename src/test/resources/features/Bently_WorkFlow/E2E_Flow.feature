@@ -23,4 +23,19 @@ Feature: Bentley : E2E Flows
 
 
 
+    #################Claim authorised to invoice sent
+    And I select the claimID "984227" from "Claims Authorised; Please Repair" page
+    #And I verify the claim details in claim summary page   ----serenity variable names to be corrected
+    And I add documents to the claim
+    And I navigate to add invoice page
+    #And I verify the details in invoice page         --------------serenity variable names to be corrected
+    And I add invoice for the claim
+    Then The invoice creation should be successful
+    And I navigate to "Home" page
+    And I validate the "Claims Authorised; Please Repair" fitter details in Dashboard
+    And I navigate to "Home" page
+    And I validate the "Invoices Sent; Awaiting Payment" fitter details in Dashboard
+
+
+
 
