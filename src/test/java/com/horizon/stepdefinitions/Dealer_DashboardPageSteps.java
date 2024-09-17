@@ -39,4 +39,8 @@ public class Dealer_DashboardPageSteps {
     public void iHaveValidatedFitterDetailsInDashboard(String filterType) {
         dashBoardSteps.validateFilterDetails(filterType);
     }
+    @And("I select the claimID {string} from {string} page")
+    public void selectClaimIDFromFilter(String claimID, String filterType) {
+        dashBoardSteps.selectClaimIDFromFilter(claimID, filterType);
+    }
 }

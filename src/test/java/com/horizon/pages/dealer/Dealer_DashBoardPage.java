@@ -10,6 +10,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,12 @@ public class Dealer_DashBoardPage extends PageObject {
     List<WebElementFacade> toActionSectionFilters;
     private @FindBy(xpath = "//div[contains(text(),'For Information')]/following-sibling::div[contains(@class,'filters')]/a")
     List<WebElementFacade> forInformationSectionFilters;
+    private @FindBy(xpath = "//select[@id='search-type']")
+    WebElementFacade authorizedClaimSearchParam;
+    private @FindBy(xpath = "//input[@id='search']")
+    WebElementFacade authorizedClaimSearchInputField;
+    private @FindBy(xpath = "//button[@class='btn']")
+    WebElementFacade authorizedClaimSearchButton;
 
 
     CommonMethods commonMethods = new CommonMethods();
@@ -420,5 +427,22 @@ public class Dealer_DashBoardPage extends PageObject {
                 .as("Claims Awaiting Authorisation - Filter Counter value is missing").isTrue();
         Serenity.setSessionVariable(Serenity.sessionVariableCalled("brandName") + "_claimsAwaitingAuthorisationCounterValue")
                 .to(claimsAwaitingAuthorisationFilter.findElement(By.xpath(".//following-sibling::div[contains(@class,'counter')]/span")).getText().trim());
+    }
+    public void selectClaimIDFromFilter(String claimID, String filterType) {
+        String claimId = null;
+        if (Objects.isNull(Serenity.sessionVariableCalled("claimId")))
+            claimId = claimID;
+        else claimId = Serenity.sessionVariableCalled("claimId").toString();
+        getDriver().findElement(By.xpath("//span[contains(text(),'"+filterType+"')]")).click();
+        selectClaimIDFromList(claimId);
+    }
+
+    private void selectClaimIDFromList(String claimId) {
+        waitForCondition().until(ExpectedConditions.visibilityOf(authorizedClaimSearchParam));
+        Select searchParam = new Select(authorizedClaimSearchParam);
+        searchParam.selectByVisibleText("Claim ID");
+        authorizedClaimSearchInputField.sendKeys(claimId);
+        commonMethods.clickOn(authorizedClaimSearchButton);
+        getDriver().findElement(By.xpath("//a[contains(text(),'" + claimId + "')]")).click();
     }
 }

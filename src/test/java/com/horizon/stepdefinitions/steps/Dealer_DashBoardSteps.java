@@ -31,4 +31,8 @@ public class Dealer_DashBoardSteps {
     public void validateFilterDetails(String filterType) {
         dashBoardPage.validateSpecificFilterDetails(filterType);
     }
+    @Step("I select the claimID from filter")
+    public void selectClaimIDFromFilter(String claimID, String filterType) {
+        dashBoardPage.selectClaimIDFromFilter(claimID, filterType);
+    }
 }
