@@ -43,4 +43,9 @@ public class Dealer_DashboardPageSteps {
     public void selectClaimIDFromFilter(String claimID, String filterType) {
         dashBoardSteps.selectClaimIDFromFilter(claimID, filterType);
     }
+
+    @And("I validate that the claim is listed under {string} fitter")
+    public void iValidateThatTheClaimIsListedUnderFitter(String filterName) {
+        dashBoardSteps.ValidateThatTheClaimIsListedUnderFitter(filterName);
+    }
 }

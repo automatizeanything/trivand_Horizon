@@ -16,6 +16,12 @@ public class Handler_DashBoardPage extends PageObject {
     WebElementFacade MyNewClaimstobeSubmitted;
     private @FindBy(xpath = "//i[@class='icon-home']/parent::a")
     WebElementFacade Home_Btn;
+    private @FindBy(xpath = "(//i[@class='icon-user'])[3]/parent::a")
+    WebElementFacade logoutuserdisplay_Lbl;
+    private @FindBy(xpath = "//a[@href='/logout']")
+    WebElementFacade logout_Lbl;
+
+
 
     public void NavigateToAnySubtabs(String subTab, String tab) {
         commonMethods.waitAndClick(Home_Btn);
@@ -33,6 +39,12 @@ public class Handler_DashBoardPage extends PageObject {
     public void ChooseTheWidget(String widget) {
         waitABit(2000);
         commonMethods.scrollIntoTheViewAndClick( getDriver().findElement(By.xpath("//div[contains(text(),'"+widget+"')]")));
+
+    }
+
+    public void performLogout() {
+        commonMethods.waitAndClick(logoutuserdisplay_Lbl);
+        commonMethods.waitAndClick(logout_Lbl);
 
     }
 }

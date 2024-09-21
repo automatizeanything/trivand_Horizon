@@ -11,3 +11,8 @@ Feature: Approval of the claim in sevatas side
     And I choose the "All Damage Items not Authorised / Awaiting Sending" widget
     And I open the created claim
     And I update the authorization details
+    And I performed Logout
+    And I login into Horizon application as a "Bentley" "Dealer"
+    And I can navigate to dealer dashboard page
+    And I verify the details on the dealer dashboard page
+    And I validate that the claim is listed under "Claims Authorised; Please Repair" fitter

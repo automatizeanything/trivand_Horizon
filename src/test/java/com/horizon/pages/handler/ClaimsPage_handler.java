@@ -2,6 +2,7 @@ package com.horizon.pages.handler;
 
 
 import com.horizon.utility.CommonMethods;
+import net.serenitybdd.core.Serenity;
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;
 import org.openqa.selenium.By;
@@ -79,6 +80,11 @@ public class ClaimsPage_handler extends PageObject {
     WebElementFacade sendEmail_Btn;
     private @FindBy(xpath = "//div[text()='An email has been sent to the dealer concerning the selected items being authorised for repairs.']")
     WebElementFacade email_Success_Msg;
+    private @FindBy(xpath = "//button[@data-dismiss='alert']")
+    WebElementFacade CloseEmailSuccess_Btn;
+
+
+
 
 
 
@@ -89,7 +95,8 @@ public class ClaimsPage_handler extends PageObject {
 
     public void PerformTheClaimAuthorisation() {
         waitABit(5000);
-        NavigateToCreatedClaim("984230");
+        Serenity.setSessionVariable("ClaimID").to("984340");
+        NavigateToCreatedClaim(Serenity.sessionVariableCalled("ClaimID").toString());
         updateClientAndTerritory();
         updateVehicle();
         DamageItemUpdateAndVerification();
@@ -118,8 +125,8 @@ public class ClaimsPage_handler extends PageObject {
     }
 
     private void updateLiability() {
-        Liability_Lbl.click();
-        save_btn.click();
+        commonMethods.waitAndClick(Liability_Lbl);
+        commonMethods.waitAndClick(save_btn);
     }
 
 
@@ -183,7 +190,7 @@ public class ClaimsPage_handler extends PageObject {
     }
 
     public void openTheCreateClaim() {
-        NavigateToCreatedClaim("984230");
+        NavigateToCreatedClaim(Serenity.sessionVariableCalled("ClaimID").toString());
     }
 
     public void UpdateTheAuthorizationDetails() {
@@ -203,6 +210,8 @@ public class ClaimsPage_handler extends PageObject {
         sendEmail_Btn.click();
         assertThat(email_Success_Msg.isDisplayed()).
                 as("Confirmation email is not send");
+        CloseEmailSuccess_Btn.click();
+
 
 
     }

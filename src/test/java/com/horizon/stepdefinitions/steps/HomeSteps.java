@@ -16,4 +16,9 @@ public class HomeSteps {
     public void iChooseTheWidget(String widget) {
         handler_DashBoardPage.ChooseTheWidget(widget);
     }
+
+    @Step("I perform logout")
+    public void performLogout() {
+        handler_DashBoardPage.performLogout();
+    }
 }
