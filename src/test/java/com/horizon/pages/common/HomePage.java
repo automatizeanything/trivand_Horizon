@@ -25,20 +25,7 @@ public class HomePage extends PageObject {
     CommonMethods commonMethods = new CommonMethods();
     private EnvironmentVariables environmentVariables;
 
-    public void loginToGID(String userType) {
-        if(userType.contains("Created"))
-            enterRuntimeCreatedUserDetails(userType);
-        else {
-            Serenity.setSessionVariable("UserName").to(getUserName(userType));
-            userNameField.sendKeys(getUserName(userType));
-        }
-        if(userType.equalsIgnoreCase("Admin"))
-            passwordField.sendKeys(getPassword());
-        else
-            passwordField.sendKeys("Surveyor@123");
-        loginButton.click();
-        commonMethods.waitForPageToLoad(getDriver());
-    }
+
     public void loginToHorizon(String brand, String userType) {
         Serenity.setSessionVariable("UserName").to(getUserName(brand+userType));
         Serenity.setSessionVariable("brandName").to(brand);
@@ -64,6 +51,7 @@ public class HomePage extends PageObject {
                     .getProperty(userType+".user")+"test";
     }
     private String getPassword() {
+            System.setProperty("password","V3h1cl3_50V3h1cl3_50!!!1980");
             return System.getProperty("password");
     }
 }

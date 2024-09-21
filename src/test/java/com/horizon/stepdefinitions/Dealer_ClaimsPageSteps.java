@@ -34,4 +34,6 @@ public class Dealer_ClaimsPageSteps {
     public void iHaveAddedDamageItemDetails() {
         claimsSteps.IHavAddedDamageItems();
     }
+
+
 }
