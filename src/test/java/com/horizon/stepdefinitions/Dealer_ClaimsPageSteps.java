@@ -87,4 +87,6 @@ public class Dealer_ClaimsPageSteps {
     public void verifyInvoiceDetails() {
         claimsSteps.verifyInvoiceDetails();
     }
+
+
 }

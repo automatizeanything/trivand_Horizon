@@ -35,7 +35,7 @@ public class LoginPage extends PageObject {
         if(userType.equalsIgnoreCase("Admin"))
             passwordField.sendKeys(getPassword());
         else
-            passwordField.sendKeys("Surveyor@123");
+            passwordField.sendKeys("V3h1cl3_50V3h1cl3_50!!!1980");
         loginButton.click();
         commonMethods.waitForPageToLoad(getDriver());
     }
