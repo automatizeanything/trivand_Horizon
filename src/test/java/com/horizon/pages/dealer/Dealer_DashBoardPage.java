@@ -445,4 +445,15 @@ public class Dealer_DashBoardPage extends PageObject {
         commonMethods.clickOn(authorizedClaimSearchButton);
         getDriver().findElement(By.xpath("//a[contains(text(),'" + claimId + "')]")).click();
     }
+
+    public void ValidateThatTheClaimIsListedUnderFitter(String filterName) {
+        commonMethods.scrollIntoTheViewAndClick( getDriver().findElement(By.xpath("//span[contains(text(),'"+filterName+"')]")));
+
+
+        assertThat(getDriver().findElement(By.xpath(
+                "//a[contains(@href,'claims') and text()='"+Serenity.sessionVariableCalled("ClaimID").toString()+"']")).isDisplayed())
+                .as("Claims is not listed in  Claims Authorised - Filter ").isTrue();
+
+
+    }
 }

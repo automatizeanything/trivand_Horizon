@@ -35,4 +35,8 @@ public class Dealer_DashBoardSteps {
     public void selectClaimIDFromFilter(String claimID, String filterType) {
         dashBoardPage.selectClaimIDFromFilter(claimID, filterType);
     }
+
+    public void ValidateThatTheClaimIsListedUnderFitter(String filterName) {
+        dashBoardPage.ValidateThatTheClaimIsListedUnderFitter(filterName);
+    }
 }

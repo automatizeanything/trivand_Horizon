@@ -18,4 +18,9 @@ public class HomePageSteps {
     public void iChooseTheWidget(String widgetName) {
         homeSteps.iChooseTheWidget(widgetName);
     }
+
+    @And("I performed Logout")
+    public void iPerformedLogout() {
+        homeSteps.performLogout();
+    }
 }
