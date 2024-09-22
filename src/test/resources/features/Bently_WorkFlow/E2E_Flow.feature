@@ -20,8 +20,17 @@ Feature: Bentley : E2E Flows
     Then I validate the "Claims Awaiting Authorisation" fitter details in Dashboard
     And I navigate to My Claims page and validate the claims details with status "Awaiting acceptance from Sevatas"
 
-
-
+    And I performed Logout
+    When I login into Horizon application as "BentleyHandler"
+    Then I navigate to the "Claims" subtab in "Home" tab
+    And I choose the "My New Claims to be Submitted" widget
+    And I perform the Claim Authorisation
+    Then I navigate to the "Claims" subtab in "Home" tab
+    And I choose the "All Damage Items not Authorised / Awaiting Sending" widget
+    And I open the created claim
+    And I update the authorization details
+    And I performed Logout
+    And I login into Horizon application as a "Bentley" "Dealer"
 
     #################Claim authorised to invoice sent
     And I select the claimID "984227" from "Claims Authorised; Please Repair" page
