@@ -254,20 +254,21 @@ public class Dealer_ClaimsPage extends PageObject {
 
     private void updateVehicleDetails(DataTable claimDetails) {
         verifyFieldValidationsVehicleDetailsPage(claimDetails);
-        nextBtn.click();
+        commonMethods.scrollIntoTheViewAndClick(nextBtn);
+
     }
 
     private void verifyFieldValidationsVehicleDetailsPage(DataTable claimDetails) {
         List<Map<String, String>> claimDetailsData = claimDetails.asMaps(String.class, String.class);
         waitFor(nextBtn);
         typeInto(vinTxtFld, "2FM");
-        nextBtn.click();
+        commonMethods.scrollIntoTheViewAndClick(nextBtn);
         commonMethods.verifyValidationMessage(Constant.VIN_VALIDATION_MESSAGE);
         String vin = commonMethods.randomNumbergenerator(17).toUpperCase();
         typeInto(vinTxtFld, vin);
         Serenity.setSessionVariable("vin").to(vin);
         vehicleSpecTxtFld.click();
-        nextBtn.click();
+        commonMethods.scrollIntoTheViewAndClick(nextBtn);
         commonMethods.verifyValidationMessage(Constant.ARRIVAL_DATE_VALIDATION_MESSAGE);
         selectArrivalDate(claimDetailsData.get(0).get("arrivalDaysDifference"));
         waitABit(4000);
@@ -398,7 +399,8 @@ public class Dealer_ClaimsPage extends PageObject {
 
         if (Objects.nonNull(Serenity.sessionVariableCalled("isClaimSubmitted"))) {
             assertThat(claimIdFld_AwaitingAcceptance.getText().trim()).as("Claim Id Value is missing").isNotEqualTo("");
-            if (Objects.nonNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted")))
+            if (Objects.nonNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted")) &&
+                    Objects.nonNull(Serenity.sessionVariableCalled("claimId")))
                 assertThat(claimIdFld_AwaitingAcceptance.getText().trim()).as("Claim Id Value is not same as previous").
                         isEqualTo(Serenity.sessionVariableCalled("claimId").toString());
             Serenity.setSessionVariable("claimId").to(claimIdFld_AwaitingAcceptance.getText().trim());
@@ -437,9 +439,10 @@ public class Dealer_ClaimsPage extends PageObject {
         verifyClaimCreationPageHeaderDetails("Vehicle", "Open");
         if (Objects.isNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted")))
             verifySideBarVerification("Vehicle_EditMode");
-        clickOn(nextBtn);
+        commonMethods.scrollIntoTheViewAndClick(nextBtn);
         verifyAlreadyAddedVehicleDetails();
-        clickOn(nextBtn);
+        commonMethods.scrollIntoTheViewAndClick(nextBtn);
+        
         if (Objects.nonNull(Serenity.sessionVariableCalled("isDamageItemsSubmitted"))) {
             verifySideBarVerification("Damage Items_EditMode");
             verifyClaimCreationPageHeaderDetails("Damage Items", "Open");

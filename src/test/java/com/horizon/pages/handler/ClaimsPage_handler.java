@@ -95,8 +95,8 @@ public class ClaimsPage_handler extends PageObject {
 
     public void PerformTheClaimAuthorisation() {
         waitABit(5000);
-        Serenity.setSessionVariable("ClaimID").to("984340");
-        NavigateToCreatedClaim(Serenity.sessionVariableCalled("ClaimID").toString());
+        //Serenity.setSessionVariable("ClaimID").to("984340");
+        NavigateToCreatedClaim(Serenity.sessionVariableCalled("claimId").toString());
         updateClientAndTerritory();
         updateVehicle();
         DamageItemUpdateAndVerification();
@@ -132,6 +132,7 @@ public class ClaimsPage_handler extends PageObject {
 
     public void NavigateToCreatedClaim(String claimID)
     {
+        waitABit(5000);
         commonMethods.waitAndClick(getDriver().findElement(By.xpath(
                 "//a[contains(@href,'claims') and text()='"+claimID+"']")));
 
@@ -190,7 +191,7 @@ public class ClaimsPage_handler extends PageObject {
     }
 
     public void openTheCreateClaim() {
-        NavigateToCreatedClaim(Serenity.sessionVariableCalled("ClaimID").toString());
+        NavigateToCreatedClaim(Serenity.sessionVariableCalled("claimId").toString());
     }
 
     public void UpdateTheAuthorizationDetails() {
