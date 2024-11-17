@@ -8,7 +8,8 @@ import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;
 import net.serenitybdd.annotations.DefaultUrl;
 import net.thucydides.model.util.EnvironmentVariables;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
 @DefaultUrl("page:webdriver.base.url")
@@ -61,4 +62,12 @@ public class LoginPage extends PageObject {
          return tempPassword;
            // return System.getProperty("password");
     }
+
+    public void ZoomOutThePageToASmallerSize() {
+        WebDriver driver = getDriver();
+        Actions actions = new Actions(driver);
+        actions.keyDown(Keys.CONTROL).sendKeys(Keys.SUBTRACT).keyUp(Keys.CONTROL).perform();
+        actions.keyDown(Keys.CONTROL).sendKeys(Keys.SUBTRACT).keyUp(Keys.CONTROL).perform();
+    }
+
 }

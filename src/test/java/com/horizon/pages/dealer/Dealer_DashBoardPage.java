@@ -145,7 +145,7 @@ public class Dealer_DashBoardPage extends PageObject {
         String manufacture = Serenity.sessionVariableCalled("brandName");
         if (manufacture.equals("Bentley")) {
             assertThat(toActionSectionFilters.size()).as("For " + manufacture + ", To Action section have some missing filters")
-                    .isEqualTo(3);
+                    .isEqualTo(4);
             verifyDamagesReportedViaDVMAppToCompleteFilter();
             verifyIncompleteClaimsFilter();
             verifyClaimsAuthorisedPleaseRepairFilter();

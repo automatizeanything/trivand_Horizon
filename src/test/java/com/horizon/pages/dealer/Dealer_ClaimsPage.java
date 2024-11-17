@@ -136,7 +136,7 @@ public class Dealer_ClaimsPage extends PageObject {
     WebElementFacade createButton;
     private @FindBy(id = "add-di-dialog")
     WebElementFacade addAnotherDamageItemsConfirmPopup;
-    private @FindBy(xpath = "//div[contains(@class,'modal-footer')]/a")
+    private @FindBy(xpath = "//a[contains(@href,'damage_items/new')]")
     WebElementFacade yesBtn;
     private @FindBy(xpath = "//div[contains(@class,'modal-footer')]/a[2]")
     WebElementFacade noBtn;
@@ -236,7 +236,7 @@ public class Dealer_ClaimsPage extends PageObject {
 
     CommonMethods commonMethods = new CommonMethods();
     Dealer_DashBoardPage dashBoardPage = new Dealer_DashBoardPage();
-
+    int NoOfDamageItemsToBeAdded=1;
 
     public void waitForClaimCreationPage() {
         waitForCondition().until(
@@ -371,6 +371,7 @@ public class Dealer_ClaimsPage extends PageObject {
         calenderIcon.click();
         waitFor(calenderIconArrowLeft);
         selectSpecificDate(arrivalDaysDifference);
+        waitABit(3000);
         waitFor("//div[2]/table/tbody/tr/td/span[10]");
         getDriver().findElement(By.xpath("//div[2]/table/tbody/tr/td/span[10]")).click();
         waitFor("//span[contains(.,'9:25')]");
@@ -562,19 +563,21 @@ public class Dealer_ClaimsPage extends PageObject {
         List<Map<String, String>> damageItemsData = damageItems.asMaps(String.class, String.class);
         if (damageItemsData.get(0).get("damageItemsDetails").equals("yes")) {
             waitFor(damageLocationDropDown);
-            commonMethods.selectValueFromDropDown(damageLocationDropDown, "Bumper / Cover / Ext. (Rear) (04)");
-            Serenity.setSessionVariable("damageLocation").to("Bumper / Cover / Ext. (Rear)");
+            //damageItemsData.get(0).get("severityLevel")
+
+            commonMethods.selectValueFromDropDown(damageLocationDropDown, damageItemsData.get(0).get("damagelocation"));
+            Serenity.setSessionVariable("damageLocation").to(damageItemsData.get(0).get("damagelocation"));
             waitABit(2000);
             //assertThat(damageLocationDropDownTickIcon.isDisplayed()).as("Damage Location DropDown Tick Icon is missing").isTrue();
             waitFor(damageTypeDropDown);
-            commonMethods.selectValueFromDropDown(damageTypeDropDown, "Dented");
-            Serenity.setSessionVariable("damageType").to("Dented");
+            commonMethods.selectValueFromDropDown(damageTypeDropDown, damageItemsData.get(0).get("damageType"));
+            Serenity.setSessionVariable("damageType").to(damageItemsData.get(0).get("damageType"));
             waitFor(repairMethodDropDown);
-            commonMethods.selectValueFromDropDown(repairMethodDropDown, "Repaint");
-            Serenity.setSessionVariable("repairMethod").to("Repaint");
+            commonMethods.selectValueFromDropDown(repairMethodDropDown, damageItemsData.get(0).get("repairMethod"));
+            Serenity.setSessionVariable("repairMethod").to(damageItemsData.get(0).get("repairMethod"));
             waitFor(severityLevelDropDown);
-            commonMethods.selectValueFromDropDown(severityLevelDropDown, "Damage 30cm and over in length and/or diameter");
-            Serenity.setSessionVariable("severityLevel").to("Damage 30cm and over in length and/or diameter");
+            commonMethods.selectValueFromDropDown(severityLevelDropDown, damageItemsData.get(0).get("severityLevel"));
+            Serenity.setSessionVariable("severityLevel").to(damageItemsData.get(0).get("severityLevel"));
         }
     }
 
@@ -701,7 +704,10 @@ public class Dealer_ClaimsPage extends PageObject {
         waitFor(createButton);
         commonMethods.clickWithJavaScript(createButton);
         waitFor(addAnotherDamageItemsConfirmPopup);
-        if (damageItemsData.get(0).get("noOfDamageItemsToBeAdded").equals("1")) {
+
+
+        NoOfDamageItemsToBeAdded=Integer.parseInt(damageItemsData.get(0).get("noOfDamageItemsToBeAdded"));
+        if (NoOfDamageItemsToBeAdded==1) {
             clickOn(noBtn);
             waitFor(claimCreationDeclarationPopup);
             waitFor(dealerTermsCheckBox);
@@ -712,6 +718,7 @@ public class Dealer_ClaimsPage extends PageObject {
             Serenity.setSessionVariable("isDamageItemsSubmitted").to("yes");
         } else {
             clickOn(yesBtn);
+            NoOfDamageItemsToBeAdded=NoOfDamageItemsToBeAdded-1;
 
         }
     }
@@ -756,6 +763,7 @@ public class Dealer_ClaimsPage extends PageObject {
             Serenity.setSessionVariable("estimateNumber").to("EstimateNo.1");
             selectEstimateDate(damageItemsData.get(0).get("estimateDaysDifference"));
             enterCoastDetailsAsDraft(damageItemsEstimateDetails);
+
 
         }
     }

@@ -20,4 +20,8 @@ public class Handler_ClaimsSteps {
     public void UpdateTheAuthorizationDetails() {
         claimsPage.UpdateTheAuthorizationDetails();
     }
+    @Step("I send the Authorization Details After AV Update")
+    public void iSendTheAuthorizationDetailsAfterAVUpdate() {
+        claimsPage.SendTheAuthorizationDetailsAfterAVUpdate();
+    }
 }
