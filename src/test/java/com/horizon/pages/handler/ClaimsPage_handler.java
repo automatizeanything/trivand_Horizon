@@ -5,8 +5,13 @@ import com.horizon.utility.CommonMethods;
 import net.serenitybdd.core.Serenity;
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;
+import net.serenitybdd.screenplay.ui.Select;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +22,11 @@ public class ClaimsPage_handler extends PageObject {
     private @FindBy(xpath = "//input[@value='Next']")
     WebElementFacade Next_Button;
     private @FindBy(xpath = "//table/descendant::a[contains(@href,'damage_items/')]")
-    WebElementFacade firstDamage_Item_Label;
+    List<WebElementFacade> firstDamage_Item_Label;
+    private @FindBy(xpath = "//table/descendant::a[contains(@href,'damage_items/')][1]")
+    WebElementFacade firstDamage_Item_Box;
+    private @FindBy(xpath = "//table/descendant::a[contains(@href,'damage_items/')][2]")
+    WebElementFacade secondDamage_Item_Box;
     private @FindBy(xpath = "//input[@id='contractor_name']")
     WebElementFacade Contractor_Field;
     private @FindBy(xpath = "//a[contains(text(),'Bentley Motors Ltd')]")
@@ -38,6 +47,22 @@ public class ClaimsPage_handler extends PageObject {
 
     private @FindBy(xpath = "//a[contains(text(),'Liability')]")
     WebElementFacade Liability_Lbl;
+    private @FindBy(xpath = "//a[contains(text(),'Appointed Surveyors')]")
+    WebElementFacade AppointedSurveyors_Lbl;
+    private @FindBy(xpath = "//input[@id='supplier']")
+    WebElementFacade AppointedSurveyors_DrpDown;
+    private @FindBy(xpath = "//a[contains(text(),'Contior [')]")
+    WebElementFacade AppointedSurveyors_DrpDown_Value;
+    private @FindBy(xpath = "//input[@id='claim_validation_due_date']")
+    WebElementFacade validation_Due_Date_Lbl;
+    private @FindBy(xpath = "(//td[@class='day active'])")
+    WebElementFacade validation_Due_Date_ActiveDay;
+    private @FindBy(xpath = "//select[@id='claim_mini_suppliers_attributes_0_survey_category']")
+    WebElementFacade survey_category_Dropdown;
+    private @FindBy(xpath = "//input[@value='Appoint Surveyor']")
+    WebElementFacade AppointSurveyorBtn;
+
+
     private @FindBy(xpath = "//a[contains(text(),'Documents')]")
     WebElementFacade Documents_Lbl;
 
@@ -76,6 +101,9 @@ public class ClaimsPage_handler extends PageObject {
     WebElementFacade Action_Btn;
     private @FindBy(xpath = "//a[@data-action='send_repair_authorisation']")
     WebElementFacade send_repair_authorisation;
+    private @FindBy(xpath = "//a[@data-action='send_updated_repair_authorisation']")
+    WebElementFacade send_Updated_repair_authorisation;
+
     private @FindBy(xpath = "//input[@value='Send Email']")
     WebElementFacade sendEmail_Btn;
     private @FindBy(xpath = "//div[text()='An email has been sent to the dealer concerning the selected items being authorised for repairs.']")
@@ -83,13 +111,18 @@ public class ClaimsPage_handler extends PageObject {
     private @FindBy(xpath = "//button[@data-dismiss='alert']")
     WebElementFacade CloseEmailSuccess_Btn;
 
-
-
-
-
-
-
-
+    private @FindBy(xpath = "//button[text()='Estimate Splitter ']")
+    WebElementFacade EstimateSplitterButton;
+    private @FindBy(xpath = "//a[text()='Split Estimate']")
+    WebElementFacade splitEstimate_Label;
+    private @FindBy(xpath = "//a[text()='Assign Automatically']")
+    WebElementFacade AssignAutomatically_Btn;
+    private @FindBy(xpath = "//input[@value='Save Changes']")
+    WebElementFacade Save_Btn;
+    private @FindBy(xpath = "//div[@class='input-append date date-picker']/child::input[@id='authorisation_due_at']")
+    WebElementFacade Authorisation_DueDate_Field;
+    private @FindBy(xpath = "//input[@id='damage_item_estimates_attributes_0_av_authorised_parts_repair_cost']")
+    WebElementFacade AvAuthorisedPartsValue;
 
 
 
@@ -101,6 +134,7 @@ public class ClaimsPage_handler extends PageObject {
         updateVehicle();
         DamageItemUpdateAndVerification();
         updateLiability();
+        updateAppointedSurveyors();
         updateDocuments();
         commonMethods.scrollIntoTheViewAndClick(ReadyForSubmission_Btn);
         commonMethods.waitAndClick(ProceedToFinalReview_Btn);
@@ -129,39 +163,74 @@ public class ClaimsPage_handler extends PageObject {
         commonMethods.waitAndClick(save_btn);
     }
 
+    private void updateAppointedSurveyors() {
+        commonMethods.waitAndClick(AppointedSurveyors_Lbl);
+        waitABit(4000);
+        AppointedSurveyors_DrpDown.clear();
+        AppointedSurveyors_DrpDown.sendKeys("Contior");
+        waitABit(1000);
+        commonMethods.waitAndClick(AppointedSurveyors_DrpDown_Value);
+        validation_Due_Date_Lbl.click();
+        validation_Due_Date_ActiveDay.click();
 
-    public void NavigateToCreatedClaim(String claimID)
-    {
-        waitABit(5000);
-        commonMethods.waitAndClick(getDriver().findElement(By.xpath(
-                "//a[contains(@href,'claims') and text()='"+claimID+"']")));
+        survey_category_Dropdown.selectByValue("desktop");
+
+        AppointSurveyorBtn.click();
+
+        //Desktop
+
 
     }
-    public void DamageItemUpdateAndVerification()
-    {
-        String contractor="Bentley Motors Ltd";
-        commonMethods.waitAndClick(firstDamage_Item_Label);
+
+
+    public void NavigateToCreatedClaim(String claimID) {
+        waitABit(5000);
+        commonMethods.waitAndClick(getDriver().findElement(By.xpath(
+                "//a[contains(@href,'claims') and text()='" + claimID + "']")));
+
+    }
+
+    public void DamageItemUpdateAndVerification() {
+        String contractor = "Bentley Motors Ltd";
+        EstimateSplitterButton.click();
+        splitEstimate_Label.click();
         waitABit(3000);
-        Contractor_Field.sendKeys("Bentley Motors Ltd");
-        getDriver().findElement(By.xpath("//a[contains(text(),'"+contractor+"')]")).click();
-        //Bentley_select.click();
-        commonMethods.scrollIntoTheViewAndClick(Autoscan_DrpDwn);
-        commonMethods.waitAndClick(Autoscan_AwaitingResponse);
-        //commonMethods.scrollIntoTheViewAndClick(carrier_name_Field);
-        carrier_name_Field.sendKeys("Bentley Dubai - Al Habtoor Motors");
-        getDriver().findElement(By.xpath("//a[contains(text(),'Bentley Dubai - Al Habtoor Motors')]")).click();
-        Authorisation_due_date.click();
+        waitFor(AssignAutomatically_Btn);
+        AssignAutomatically_Btn.click();
+        Authorisation_DueDate_Field.click();
         Activeday_date.click();
-        commonMethods.scrollIntoTheViewAndClick(save_btn);
+        commonMethods.scrollIntoTheViewAndClick(Save_Btn);
+
+        waitABit(5000);
+        //int itemsize=firstDamage_Item_Label.size();
+        for (int i = 0; i < firstDamage_Item_Label.size(); i++) {
+            waitABit(5000);
+            if (i == 0)
+                firstDamage_Item_Label.get(0).click();
+            else
+                secondDamage_Item_Box.click();
+
+            waitABit(3000);
+            Contractor_Field.sendKeys("Bentley Motors Ltd");
+            getDriver().findElement(By.xpath("//a[contains(text(),'" + contractor + "')]")).click();
+            //Bentley_select.click();
+            commonMethods.scrollIntoTheViewAndClick(Autoscan_DrpDwn);
+            commonMethods.waitAndClick(Autoscan_AwaitingResponse);
+            //commonMethods.scrollIntoTheViewAndClick(carrier_name_Field);
+            carrier_name_Field.sendKeys("Bentley Dubai - Al Habtoor Motors");
+            getDriver().findElement(By.xpath("//a[contains(text(),'Bentley Dubai - Al Habtoor Motors')]")).click();
+            Authorisation_due_date.click();
+            Activeday_date.click();
+            commonMethods.scrollIntoTheViewAndClick(save_btn);
+        }
+
         assertThat(verifytickMarkPresent("Damage Items")).
                 as("Damage Items is Selected by default").isGreaterThan(0);
 
 
-
     }
 
-    public void updateClientAndTerritory()
-    {
+    public void updateClientAndTerritory() {
 //        assertThat(verifytickMarkPresent("Client & Territory")).
 //                as("Client & Territory is Selected by default").isEqualTo(0);
         commonMethods.scrollIntoTheViewAndClick(Next_Button);
@@ -169,8 +238,7 @@ public class ClaimsPage_handler extends PageObject {
                 as("Client & Territory is Selected by default").isGreaterThan(0);
     }
 
-    public void updateVehicle()
-    {
+    public void updateVehicle() {
         assertThat(verifytickMarkPresent("Vehicle")).
                 as("Vehicle is Selected by default").isEqualTo(0);
         commonMethods.scrollIntoTheViewAndClick(Next_Button);
@@ -179,13 +247,13 @@ public class ClaimsPage_handler extends PageObject {
     }
 
     public int verifytickMarkPresent(String SectionName) {
-        int size=0;
+        int size = 0;
         try {
-              size = getDriver().findElements(
+            size = getDriver().findElements(
                     By.xpath(
                             "//a[contains(text(),'" + SectionName + "')]/i[@class='icon-ok']")).size();
             return size;
-        }catch (Exception e) {
+        } catch (Exception e) {
             return size;
         }
     }
@@ -212,6 +280,33 @@ public class ClaimsPage_handler extends PageObject {
         assertThat(email_Success_Msg.isDisplayed()).
                 as("Confirmation email is not send");
         CloseEmailSuccess_Btn.click();
+        System.out.println();
+
+
+    }
+
+    public void verifyAVUpdatedValue()
+    {
+        assertThat(AvAuthorisedPartsValue.getAttribute("value").split("\\.")[0].equalsIgnoreCase(Serenity.sessionVariableCalled("AV_Parts_Value").toString())).
+                as("AV updated value is not reflected");
+
+    }
+
+    //to be completed
+    public void SendTheAuthorizationDetailsAfterAVUpdate() {
+        commonMethods.scrollWithJavaScript(save_btn);
+        save_btn.click();
+        waitABit(2000);
+        commonMethods.scrollIntoTheViewAndClick(DamageitemSelection_Checkbox);
+        Action_Btn.click();
+        send_Updated_repair_authorisation.click();
+        Next_Button.click();
+        sendEmail_Btn.click();
+        assertThat(email_Success_Msg.isDisplayed()).
+                as("Confirmation email is not send");
+        CloseEmailSuccess_Btn.click();
+        System.out.println();
+
 
 
 

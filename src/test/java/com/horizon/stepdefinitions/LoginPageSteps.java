@@ -28,4 +28,9 @@ public class LoginPageSteps {
         loginSteps.loginInvalidCredentials();
     }
 
+
+    @And("i zoom out the page to a smaller size")
+    public void iZoomOutThePageToASmallerSize() {
+        loginSteps.ZoomOutThePageToASmallerSize();
+    }
 }

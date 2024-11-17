@@ -25,4 +25,9 @@ public class LoginSteps {
     public void loginInvalidCredentials() {
         loginPage.validateInvalidLogin();
     }
+
+    public void ZoomOutThePageToASmallerSize() {
+        loginPage.ZoomOutThePageToASmallerSize();
+
+    }
 }

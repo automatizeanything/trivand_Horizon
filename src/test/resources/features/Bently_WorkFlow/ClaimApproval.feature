@@ -16,3 +16,5 @@ Feature: Approval of the claim in sevatas side
     And I can navigate to dealer dashboard page
     And I verify the details on the dealer dashboard page
     And I validate that the claim is listed under "Claims Authorised; Please Repair" fitter
+
+   
